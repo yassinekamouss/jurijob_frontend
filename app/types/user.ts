@@ -1,8 +1,5 @@
-// types/user.ts
-export interface User {
-  id: string;
-  nom: string;
-  prenom: string;
-  email: string;
-  role: string;
-}
+import Recruteur from "./recruteur";
+import Candidat from "./candidat";
+
+
+export type User = Candidat | Recruteur;
