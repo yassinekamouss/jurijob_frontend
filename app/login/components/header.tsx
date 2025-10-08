@@ -52,7 +52,7 @@ export default function Header() {
               {showMenu && (
                 <div className="absolute right-0 mt-2 w-52 bg-white border border-black/10 rounded-md shadow-lg py-2">
                   <Link
-                    href="/signUp/RecruteurSignUp"
+                    href="/signup/recruteur"
                     className="flex items-center gap-2 px-4 py-2 text-sm text-black hover:bg-black/5 w-full text-left"
                     onClick={() => console.log("Recruteur")}
                   >
@@ -60,7 +60,7 @@ export default function Header() {
                     En tant que Recruteur
                   </Link>
                   <Link
-                    href="/signUp/CandidatSignUp"
+                    href="/signup/candidat"
                     className="flex items-center gap-2 px-4 py-2 text-sm text-black hover:bg-black/5 w-full text-left"
                     onClick={() => console.log("Diplômé")}
                   >

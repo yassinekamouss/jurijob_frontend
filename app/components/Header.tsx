@@ -1,10 +1,13 @@
 "use client";
 
 import Link from "next/link";
+import { useState } from "react";
+import { ChevronDown, Building2, GraduationCap } from "lucide-react";
 import Brand from "./Brand";
 import Reveal from "./Reveal";
 
 export default function Header() {
+  const [showMenu, setShowMenu] = useState(false);
   const nav = [
     { href: "/#home", label: "Accueil" },
     { href: "/#how-it-works", label: "Comment ça marche" },
@@ -98,11 +101,36 @@ export default function Header() {
                   className="px-4 py-2 rounded-lg text-black hover:bg-gray-200 transition">
                   Connexion
                 </Link>
-                <Link
-                  href="/signup"
-                  className="bg-black text-white hover:bg-gray-800 rounded-lg px-6 py-2 transition">
-                  Inscription
-                </Link>
+                <div className="relative">
+                  <button
+                    onClick={() => setShowMenu(!showMenu)}
+                    className="bg-black text-white hover:bg-gray-800 rounded-lg px-6 py-2 transition flex items-center gap-2"
+                  >
+                    Inscription
+                    <ChevronDown className={`w-4 h-4 transition-transform ${showMenu ? 'rotate-180' : ''}`} />
+                  </button>
+                  
+                  {showMenu && (
+                    <div className="absolute right-0 mt-2 w-52 bg-white border border-black/10 rounded-md shadow-lg py-2">
+                      <Link
+                        href="/signup/recruteur"
+                        className="flex items-center gap-2 px-4 py-2 text-sm text-black hover:bg-black/5 w-full text-left"
+                        onClick={() => console.log("Recruteur")}
+                      >
+                        <Building2 className="w-4 h-4" />
+                        En tant que Recruteur
+                      </Link>
+                      <Link
+                        href="/signup/candidat"
+                        className="flex items-center gap-2 px-4 py-2 text-sm text-black hover:bg-black/5 w-full text-left"
+                        onClick={() => console.log("Diplômé")}
+                      >
+                        <GraduationCap className="w-4 h-4" />
+                        En tant que Diplômé
+                      </Link>
+                    </div>
+                  )}
+                </div>
               </div>
             </Reveal>
           </div>
