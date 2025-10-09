@@ -6,18 +6,10 @@ import {
   GraduationCap,
   Scale,
   Briefcase,
-  Clock,
   Plus,
   Trash2,
 } from "lucide-react";
-
-interface ProfessionalInfo {
-  niveauExperience: string;
-  formationJuridique: string;
-  specialisations: string[];
-  domainExperiences: string[];
-  typeTravail: string;
-}
+import { ProfessionalInfo } from "@/app/types/professionalInfo";
 
 interface ProfessionalInfoSectionProps {
   data: ProfessionalInfo;
@@ -44,165 +36,39 @@ export function ProfessionalInfoSection({ data, onSave }: ProfessionalInfoSectio
 
   const addSpecialisation = () => {
     if (newSpecialisation.trim()) {
-      setEditedData({
-        ...editedData,
-        specialisations: [...editedData.specialisations, newSpecialisation.trim()],
-      });
+      setEditedData((prevData) => ({
+        ...prevData,
+        specialisations: [...prevData.specialisations, newSpecialisation.trim()],
+      }));
       setNewSpecialisation("");
     }
   };
 
   const removeSpecialisation = (index: number) => {
-    setEditedData({
-      ...editedData,
-      specialisations: editedData.specialisations.filter((_, i) => i !== index),
-    });
+    setEditedData((prevData) => ({
+      ...prevData,
+      specialisations: prevData.specialisations.filter((_, i) => i !== index),
+    }));
   };
 
   const addDomain = () => {
     if (newDomain.trim()) {
-      setEditedData({
-        ...editedData,
-        domainExperiences: [...editedData.domainExperiences, newDomain.trim()],
-      });
+      setEditedData((prevData) => ({
+        ...prevData,
+        domainExperiences: [...prevData.domainExperiences, newDomain.trim()],
+      }));
       setNewDomain("");
     }
   };
 
   const removeDomain = (index: number) => {
-    setEditedData({
-      ...editedData,
-      domainExperiences: editedData.domainExperiences.filter((_, i) => i !== index),
-    });
+    setEditedData((prevData) => ({
+      ...prevData,
+      domainExperiences: prevData.domainExperiences.filter((_, i) => i !== index),
+    }));
   };
 
-  return (
-    <section className="bg-white border-l-4 border-gray-800 shadow-sm">
-      <div className="px-6 py-5 border-b border-gray-200 flex items-center justify-between">
-        <h2 className="text-black font-medium">Informations professionnelles</h2>
-        {!isEditing ? (
-          <button
-            onClick={() => setIsEditing(true)}
-            className="flex items-center gap-2 text-sm text-gray-600 hover:text-black transition"
-          >
-            <Edit2 className="h-4 w-4" />
-            Modifier
-          </button>
-        ) : (
-          <div className="flex gap-3">
-            <button
-              onClick={handleCancel}
-              className="flex items-center gap-1 px-3 py-1.5 text-sm text-gray-600 border border-gray-300 rounded-md hover:bg-gray-100"
-            >
-              <X className="h-4 w-4" />
-              Annuler
-            </button>
-            <button
-              onClick={handleSave}
-              className="flex items-center gap-1 px-3 py-1.5 text-sm bg-black text-white rounded-md hover:bg-gray-800"
-            >
-              <Check className="h-4 w-4" />
-              Enregistrer
-            </button>
-          </div>
-        )}
-      </div>
-
-      <div className="p-6">
-        {!isEditing ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <InfoItem
-              icon={<GraduationCap className="h-4 w-4" />}
-              label="Formation juridique"
-              value={data.formationJuridique}
-            />
-            <InfoItem
-              icon={<Briefcase className="h-4 w-4" />}
-              label="Niveau d'expérience"
-              value={data.niveauExperience}
-            />
-            <ListItem
-              icon={<Scale className="h-4 w-4" />}
-              label="Spécialisations"
-              items={data.specialisations}
-            />
-            <ListItem
-              icon={<Briefcase className="h-4 w-4" />}
-              label="Domaines d'expérience"
-              items={data.domainExperiences}
-            />
-            <InfoItem
-              icon={<Clock className="h-4 w-4" />}
-              label="Type de travail"
-              value={data.typeTravail}
-            />
-          </div>
-        ) : (
-          <div className="space-y-7 max-w-4xl">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-              <InputField
-                label="Formation juridique"
-                id="formation"
-                value={editedData.formationJuridique}
-                placeholder="ex. Master en Droit"
-                onChange={(v) =>
-                  setEditedData({ ...editedData, formationJuridique: v })
-                }
-              />
-
-              <SelectField
-                label="Niveau d'expérience"
-                id="niveau"
-                value={editedData.niveauExperience}
-                onChange={(v) =>
-                  setEditedData({ ...editedData, niveauExperience: v })
-                }
-                options={["Débutant", "Junior", "Intermédiaire", "Senior", "Expert"]}
-              />
-
-              <SelectField
-                label="Type de travail"
-                id="typeTravail"
-                value={editedData.typeTravail}
-                onChange={(v) =>
-                  setEditedData({ ...editedData, typeTravail: v })
-                }
-                options={["CDI", "CDD", "Freelance", "Stage", "Alternance"]}
-              />
-            </div>
-
-            <EditableList
-              label="Spécialisations"
-              items={editedData.specialisations}
-              newItem={newSpecialisation}
-              setNewItem={setNewSpecialisation}
-              addItem={addSpecialisation}
-              removeItem={removeSpecialisation}
-              placeholder="ex. Droit des affaires"
-            />
-
-            <EditableList
-              label="Domaines d'expérience"
-              items={editedData.domainExperiences}
-              newItem={newDomain}
-              setNewItem={setNewDomain}
-              addItem={addDomain}
-              removeItem={removeDomain}
-              placeholder="ex. Corporate Law"
-            />
-          </div>
-        )}
-      </div>
-    </section>
-  );
-}
-
-// ----------------------
-// Sub-components
-// ----------------------
-
-function InfoItem({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
-  return (
+  const renderInfoItem = (icon: React.ReactNode, label: string, value: string) => (
     <div className="space-y-1">
       <div className="flex items-center gap-2 text-gray-500 text-sm">
         {icon}
@@ -211,18 +77,8 @@ function InfoItem({ icon, label, value }: { icon: React.ReactNode; label: string
       <p className="text-black">{value || "—"}</p>
     </div>
   );
-}
 
-function ListItem({
-  icon,
-  label,
-  items,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  items: string[];
-}) {
-  return (
+  const renderListItem = (icon: React.ReactNode, label: string, items: string[]) => (
     <div className="space-y-2">
       <div className="flex items-center gap-2 text-gray-500 text-sm">
         {icon}
@@ -240,22 +96,14 @@ function ListItem({
       </div>
     </div>
   );
-}
 
-function InputField({
-  label,
-  id,
-  value,
-  placeholder,
-  onChange,
-}: {
-  label: string;
-  id: string;
-  value: string;
-  placeholder: string;
-  onChange: (v: string) => void;
-}) {
-  return (
+  const renderInputField = (
+    label: string,
+    id: string,
+    value: string,
+    placeholder: string,
+    onChange: (v: string) => void
+  ) => (
     <div className="space-y-2">
       <label htmlFor={id} className="text-gray-700 text-sm">
         {label}
@@ -269,22 +117,14 @@ function InputField({
       />
     </div>
   );
-}
 
-function SelectField({
-  label,
-  id,
-  value,
-  onChange,
-  options,
-}: {
-  label: string;
-  id: string;
-  value: string;
-  onChange: (v: string) => void;
-  options: string[];
-}) {
-  return (
+  const renderSelectField = (
+    label: string,
+    id: string,
+    value: string,
+    onChange: (v: string) => void,
+    options: string[]
+  ) => (
     <div className="space-y-2">
       <label htmlFor={id} className="text-gray-700 text-sm">
         {label}
@@ -304,26 +144,16 @@ function SelectField({
       </select>
     </div>
   );
-}
 
-function EditableList({
-  label,
-  items,
-  newItem,
-  setNewItem,
-  addItem,
-  removeItem,
-  placeholder,
-}: {
-  label: string;
-  items: string[];
-  newItem: string;
-  setNewItem: (v: string) => void;
-  addItem: () => void;
-  removeItem: (index: number) => void;
-  placeholder: string;
-}) {
-  return (
+  const renderEditableList = (
+    label: string,
+    items: string[],
+    newItem: string,
+    setNewItem: (v: string) => void,
+    addItem: () => void,
+    removeItem: (index: number) => void,
+    placeholder: string
+  ) => (
     <div className="space-y-3 pt-4 border-t border-gray-200">
       <label className="text-gray-700 text-sm">{label}</label>
       <div className="flex flex-wrap gap-2 min-h-[2.5rem] p-3 bg-gray-50 rounded-lg border border-gray-200">
@@ -368,5 +198,119 @@ function EditableList({
         </button>
       </div>
     </div>
+  );
+
+  return (
+    <section className="bg-white border-l-4 border-black shadow-sm">
+      <div className="px-6 py-5 border-b border-gray-200 flex items-center justify-between">
+        <h2 className="text-black font-medium">Informations professionnelles</h2>
+        {!isEditing ? (
+          <button
+            onClick={() => setIsEditing(true)}
+            className="flex items-center gap-2 text-sm text-gray-600 hover:text-black transition"
+          >
+            <Edit2 className="h-4 w-4" />
+            Modifier
+          </button>
+        ) : (
+          <div className="flex gap-3">
+            <button
+              onClick={handleCancel}
+              className="flex items-center gap-1 px-3 py-1.5 text-sm text-gray-600 border border-gray-300 rounded-md hover:bg-gray-100"
+            >
+              <X className="h-4 w-4" />
+              Annuler
+            </button>
+            <button
+              onClick={handleSave}
+              className="flex items-center gap-1 px-3 py-1.5 text-sm bg-black text-white rounded-md hover:bg-gray-800"
+            >
+              <Check className="h-4 w-4" />
+              Enregistrer
+            </button>
+          </div>
+        )}
+      </div>
+
+      <div className="p-6">
+        {!isEditing ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {renderInfoItem(
+              <Briefcase className="h-4 w-4" />,
+              "Poste actuel",
+              data.posteActuel
+            )}
+            {renderInfoItem(
+              <GraduationCap className="h-4 w-4" />,
+              "Formation juridique",
+              data.formationJuridique
+            )}
+            {renderInfoItem(
+              <Briefcase className="h-4 w-4" />,
+              "Niveau d'expérience",
+              data.niveauExperience
+            )}
+            {renderListItem(
+              <Scale className="h-4 w-4" />,
+              "Spécialisations",
+              data.specialisations
+            )}
+            {renderListItem(
+              <Briefcase className="h-4 w-4" />,
+              "Domaines d'expérience",
+              data.domainExperiences
+            )}
+          </div>
+        ) : (
+          <div className="space-y-7 max-w-4xl">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+              {renderInputField(
+                "Poste actuel",
+                "posteActuel",
+                editedData.posteActuel,
+                "ex. Juriste d'entreprise",
+                (v) => setEditedData({ ...editedData, posteActuel: v })
+              )}
+
+              {renderInputField(
+                "Formation juridique",
+                "formation",
+                editedData.formationJuridique,
+                "ex. Master en Droit",
+                (v) => setEditedData({ ...editedData, formationJuridique: v })
+              )}
+
+              {renderSelectField(
+                "Niveau d'expérience",
+                "niveau",
+                editedData.niveauExperience,
+                (v) => setEditedData({ ...editedData, niveauExperience: v }),
+                ["Débutant", "Junior", "Intermédiaire", "Senior", "Expert"]
+              )}
+            </div>
+
+            {renderEditableList(
+              "Spécialisations",
+              editedData.specialisations,
+              newSpecialisation,
+              setNewSpecialisation,
+              addSpecialisation,
+              removeSpecialisation,
+              "ex. Droit des affaires"
+            )}
+
+            {renderEditableList(
+              "Domaines d'expérience",
+              editedData.domainExperiences,
+              newDomain,
+              setNewDomain,
+              addDomain,
+              removeDomain,
+              "ex. Corporate Law"
+            )}
+          </div>
+        )}
+      </div>
+    </section>
   );
 }
