@@ -93,7 +93,7 @@ export default function Footer() {
 
         <Reveal delay={0.05}>
           <div className="border-t border-gray-200 mt-8 pt-8 text-center text-gray-500">
-            <p>&copy; 2024 Jurijob. Tous droits réservés.</p>
+            <p>&copy; 2025 Jurijob. Tous droits réservés.</p>
           </div>
         </Reveal>
       </div>
