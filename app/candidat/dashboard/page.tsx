@@ -14,7 +14,7 @@ import Candidat from "@/app/types/candidat";
 import { Mail, Phone, ShieldCheck, Info, Clock, Lightbulb } from "lucide-react";
 
 export default function Dashboard() {
-  const { user, loading, logout } = useAuth();
+  const { user, loading, logout, fetchWithAuth } = useAuth();
   const [profileData, setProfileData] = useState<Candidat | null>(
     user as Candidat | null
   );
@@ -34,51 +34,131 @@ export default function Dashboard() {
     return null;
   }
 
-  const handleSavePersonalInfo = (data: PersonalInfo) => {
-    setProfileData((prevData) => {
-      if (!prevData) return null;
-      return {
-        ...prevData,
-        ...data,
-      } as Candidat;
-    });
-    console.log("Notification: Informations personnelles mises à jour");
+  const refreshProfile = async () => {
+    try {
+      const res = await fetchWithAuth("/auth/me", { method: "GET" });
+      if (res.ok) {
+        const data = await res.json();
+        setProfileData(data.user as Candidat);
+      } else {
+        console.error("Echec de rafraîchissement du profil");
+      }
+    } catch (e) {
+      console.error("Erreur lors du rafraîchissement du profil", e);
+    }
   };
 
-  const handleSaveProfessionalInfo = (data: ProfessionalInfo) => {
-    setProfileData((prevData) => {
-      if (!prevData) return null;
-      return {
-        ...prevData,
-        ...data,
-      } as Candidat;
-    });
-    console.log("Notification: Informations professionnelles mises à jour");
+  const handleSavePersonalInfo = async (data: PersonalInfo) => {
+    if (!profileData) return;
+    try {
+      const payload = {
+        nom: data.nom,
+        prenom: data.prenom,
+        email: data.email,
+        isActive: data.isActive,
+        isArchived: data.isArchived,
+        // imageUrl is NOT on User model; update separately on Candidat
+      };
+      const res = await fetchWithAuth(
+        `/users/update-user/${profileData.userId}`,
+        {
+          method: "PATCH",
+          body: JSON.stringify(payload),
+        }
+      );
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        console.error("Update user failed", err);
+      }
+
+      // Update candidate-specific fields (imageUrl)
+      if (typeof data.imageUrl !== "undefined") {
+        await fetchWithAuth("/candidats/update-profile", {
+          method: "PATCH",
+          body: JSON.stringify({
+            userId: profileData.userId,
+            imageUrl: data.imageUrl,
+          }),
+        });
+      }
+
+      await refreshProfile();
+      console.log("Notification: Informations personnelles mises à jour");
+    } catch (e) {
+      console.error("Erreur MAJ infos personnelles", e);
+    }
   };
 
-  const handleSavePreferences = (preferences: SearchPreferences) => {
-    setProfileData((prevData) => {
-      if (!prevData) return null;
-      return {
-        ...prevData,
+  const handleSaveProfessionalInfo = async (data: ProfessionalInfo) => {
+    if (!profileData) return;
+    try {
+      const payload = {
+        userId: profileData.userId,
+        posteActuel: data.posteActuel,
+        niveauExperience: data.niveauExperience,
+        formationJuridique: data.formationJuridique,
+        specialisations: data.specialisations,
+        domainExperiences: data.domainExperiences,
+      };
+      const res = await fetchWithAuth("/candidats/update-profile", {
+        method: "PATCH",
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        console.error("Update candidat (pro) failed", err);
+      }
+      await refreshProfile();
+      console.log("Notification: Informations professionnelles mises à jour");
+    } catch (e) {
+      console.error("Erreur MAJ infos professionnelles", e);
+    }
+  };
+
+  const handleSavePreferences = async (preferences: SearchPreferences) => {
+    if (!profileData) return;
+    try {
+      const payload = {
+        userId: profileData.userId,
         typeTravailRecherche: preferences.typeTravailRecherche,
         modeTravailRecherche: preferences.modeTravailRecherche,
         villesTravailRecherche: preferences.villesTravailRecherche,
-      } as Candidat;
-    });
-    console.log("Notification: Préférences de recherche mises à jour");
+      };
+      const res = await fetchWithAuth("/candidats/update-profile", {
+        method: "PATCH",
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        console.error("Update candidat (prefs) failed", err);
+      }
+      await refreshProfile();
+      console.log("Notification: Préférences de recherche mises à jour");
+    } catch (e) {
+      console.error("Erreur MAJ préférences", e);
+    }
   };
 
-  const handleSaveLanguages = (langues: Language[]) => {
-    // Stocker directement en tant que Language[] (nom, niveau)
-    setProfileData((prevData) => {
-      if (!prevData) return null;
-      return {
-        ...prevData,
+  const handleSaveLanguages = async (langues: Language[]) => {
+    if (!profileData) return;
+    try {
+      const payload = {
+        userId: profileData.userId,
         langues,
-      } as Candidat;
-    });
-    console.log("Notification: Langues mises à jour");
+      };
+      const res = await fetchWithAuth("/candidats/update-profile", {
+        method: "PATCH",
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        console.error("Update candidat (langues) failed", err);
+      }
+      await refreshProfile();
+      console.log("Notification: Langues mises à jour");
+    } catch (e) {
+      console.error("Erreur MAJ langues", e);
+    }
   };
 
   if (!profileData || loading) {
@@ -208,6 +288,8 @@ export default function Dashboard() {
           </aside>
         </div>
       </main>
+
+      {JSON.stringify(profileData, null, 2) /* DEBUG ONLY */}
     </div>
   );
 }
