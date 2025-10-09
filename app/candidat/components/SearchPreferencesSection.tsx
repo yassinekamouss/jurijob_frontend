@@ -116,24 +116,28 @@ export function SearchPreferencesSection({
 
   return (
     <section className="bg-white border-l-4 border-black shadow-sm overflow-hidden font-sans max-w-7xl mx-auto my-8">
-      <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+      <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between gap-3 flex-wrap">
         <h2 className="text-base font-semibold text-gray-900">
           Préférences de recherche & Langues
         </h2>
         {!isEditing ? (
           <button
             onClick={() => setIsEditing(true)}
-            className={`${buttonGhostStyle} p-2`}>
+            className={`${buttonGhostStyle} p-2 w-full sm:w-auto`}>
             <Edit2 className="h-4 w-4 mr-2" />
             Modifier
           </button>
         ) : (
-          <div className="flex gap-2">
-            <button onClick={handleCancel} className={buttonGhostStyle}>
+          <div className="flex gap-2 w-full sm:w-auto flex-col sm:flex-row">
+            <button
+              onClick={handleCancel}
+              className={`${buttonGhostStyle} w-full sm:w-auto`}>
               <X className="h-4 w-4 mr-1" />
               Annuler
             </button>
-            <button onClick={handleSave} className={buttonPrimaryStyle}>
+            <button
+              onClick={handleSave}
+              className={`${buttonPrimaryStyle} w-full sm:w-auto`}>
               <Check className="h-4 w-4 mr-1" />
               Enregistrer
             </button>
@@ -144,7 +148,7 @@ export function SearchPreferencesSection({
       <div className="p-6">
         {/* Unique form view: inputs disabled in read-only */}
         <div className="space-y-8 max-w-4xl">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             <div className="space-y-2">
               <label
                 htmlFor="typeTravail"
@@ -250,7 +254,7 @@ export function SearchPreferencesSection({
                 ))
               )}
             </div>
-            <div className="flex gap-2">
+            <div className="flex gap-2 flex-col sm:flex-row">
               <input
                 value={newVille}
                 onChange={(e) => isEditing && setNewVille(e.target.value)}

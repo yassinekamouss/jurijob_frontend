@@ -36,26 +36,26 @@ export function PersonalInfoSection({
 
   return (
     <section className="bg-white border-l-4 border-black shadow-sm">
-      <div className="px-6 py-5 border-b border-gray-200 flex items-center justify-between">
+      <div className="px-6 py-5 border-b border-gray-200 flex items-center justify-between gap-3 flex-wrap">
         <h2 className="text-black font-semibold">Informations personnelles</h2>
         {!isEditing ? (
           <button
             onClick={() => setIsEditing(true)}
-            className="inline-flex items-center justify-center h-9 px-3 text-sm font-medium transition-colors hover:bg-gray-100 rounded-md text-gray-600 hover:text-black">
+            className="inline-flex items-center justify-center h-9 px-3 text-sm font-medium transition-colors hover:bg-gray-100 rounded-md text-gray-600 hover:text-black w-full sm:w-auto">
             <Edit2 className="h-4 w-4 mr-2" />
             Modifier
           </button>
         ) : (
-          <div className="flex gap-2">
+          <div className="flex gap-2 w-full sm:w-auto flex-col sm:flex-row">
             <button
               onClick={handleCancel}
-              className="inline-flex items-center justify-center h-9 px-3 text-sm font-medium transition-colors hover:bg-gray-100 rounded-md text-gray-600 hover:text-black">
+              className="inline-flex items-center justify-center h-9 px-3 text-sm font-medium transition-colors hover:bg-gray-100 rounded-md text-gray-600 hover:text-black w-full sm:w-auto">
               <X className="h-4 w-4 mr-1" />
               Annuler
             </button>
             <button
               onClick={handleSave}
-              className="inline-flex items-center justify-center h-9 px-3 text-sm font-medium transition-colors rounded-md bg-black text-white hover:bg-gray-800">
+              className="inline-flex items-center justify-center h-9 px-3 text-sm font-medium transition-colors rounded-md bg-black text-white hover:bg-gray-800 w-full sm:w-auto">
               <Check className="h-4 w-4 mr-1" />
               Enregistrer
             </button>
@@ -66,12 +66,12 @@ export function PersonalInfoSection({
       <div className="p-6">
         {/* Mode formulaire unique: champs désactivés en lecture */}
         <div className="space-y-6 max-w-3xl">
-          <div className="flex items-start gap-6">
+          <div className="flex items-start gap-4 sm:gap-6">
             <div className="flex-shrink-0">
               <NativeAvatar
                 src={viewData.imageUrl}
                 fallbackText={displayInitials}
-                className="h-24 w-24 border-2 border-gray-300"
+                className="h-20 w-20 sm:h-24 sm:w-24 border-2 border-gray-300"
                 fallbackClassName="bg-gray-900 text-white text-xl"
               />
               <p className="text-xs text-gray-500 mt-2 text-center">Aperçu</p>
@@ -102,7 +102,7 @@ export function PersonalInfoSection({
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             <div className="space-y-2">
               <label
                 htmlFor="prenom"
@@ -171,7 +171,7 @@ export function PersonalInfoSection({
           </div>
 
           <div className="pt-4 border-t border-gray-200">
-            <div className="flex items-center justify-between py-3 px-4 bg-gray-50 rounded-lg">
+            <div className="flex items-center justify-between py-3 px-4 bg-gray-50 rounded-lg flex-wrap gap-3">
               <div className="flex items-center gap-3">
                 <Power
                   className={`h-5 w-5 ${

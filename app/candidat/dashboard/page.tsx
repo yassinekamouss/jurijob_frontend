@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import { Header } from "@/app/candidat/components/Header";
 import { PersonalInfoSection } from "@/app/candidat/components/PersonalInfoSection";
 import { ProfessionalInfoSection } from "@/app/candidat/components/ProfessionalInfoSection";
@@ -10,15 +11,7 @@ import { ProfessionalInfo } from "@/app/types/professionalInfo";
 import { PersonalInfo } from "@/app/types/personalInfo";
 import { SearchPreferences, Language } from "@/app/types/searchPreferences";
 import Candidat from "@/app/types/candidat";
-import {
-  Mail,
-  Phone,
-  ShieldCheck,
-  Info,
-  ExternalLink,
-  Clock,
-  Lightbulb,
-} from "lucide-react";
+import { Mail, Phone, ShieldCheck, Info, Clock, Lightbulb } from "lucide-react";
 
 export default function Dashboard() {
   const { user, loading, logout } = useAuth();
@@ -105,10 +98,10 @@ export default function Dashboard() {
         onLogout={logout}
       />
 
-      <main className="max-w-7xl mx-auto px-6 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6">
           {/* Colonne gauche ~70% */}
-          <div className="lg:col-span-8 space-y-6">
+          <div className="lg:col-span-8 space-y-5 sm:space-y-6">
             <PersonalInfoSection
               data={{
                 nom: profileData.nom || "",
@@ -146,9 +139,9 @@ export default function Dashboard() {
           </div>
 
           {/* Colonne droite ~30% (Sidebar) */}
-          <aside className="lg:col-span-4 space-y-6 lg:sticky top-24 h-fit">
+          <aside className="lg:col-span-4 space-y-5 sm:space-y-6 lg:sticky top-24 h-fit">
             {/* Contact & Support */}
-            <section className="bg-white border shadow-sm p-5">
+            <section className="bg-white  border shadow-sm p-4 sm:p-5">
               <div className="flex items-center gap-2 mb-3">
                 <Info className="h-4 w-4 text-gray-600" />
                 <h3 className="text-black font-semibold">Contact et support</h3>
@@ -172,11 +165,16 @@ export default function Dashboard() {
                   <Clock className="h-4 w-4 text-gray-500" />
                   <span>Lun–Ven • 9h–18h (CET)</span>
                 </div>
+                <a
+                  href="#"
+                  className="inline-flex items-center gap-1 text-gray-700 hover:text-black mt-1">
+                  Centre d'aide{" "}
+                </a>
               </div>
             </section>
 
             {/* À propos de Jurijob */}
-            <section className="bg-white border shadow-sm p-5">
+            <section className="bg-white  border shadow-sm p-4 sm:p-5">
               <div className="flex items-center gap-2 mb-3">
                 <ShieldCheck className="h-4 w-4 text-gray-600" />
                 <h3 className="text-black font-semibold">Pourquoi Jurijob ?</h3>
@@ -186,10 +184,15 @@ export default function Dashboard() {
                 <li>Protection des données et confidentialité</li>
                 <li>Offres pertinentes selon votre profil</li>
               </ul>
+              <Link
+                href="/"
+                className="mt-3 inline-flex items-center gap-1 text-gray-700 hover:text-black text-sm">
+                En savoir plus{" "}
+              </Link>
             </section>
 
             {/* Conseils rapides */}
-            <section className="bg-white border shadow-sm p-5">
+            <section className="bg-white  border shadow-sm p-4 sm:p-5">
               <div className="flex items-center gap-2 mb-3">
                 <Lightbulb className="h-4 w-4 text-gray-600" />
                 <h3 className="text-black font-semibold">
@@ -205,7 +208,6 @@ export default function Dashboard() {
           </aside>
         </div>
       </main>
-      {/* <pre>{JSON.stringify(profileData, null, 2)}</pre> */}
     </div>
   );
 }

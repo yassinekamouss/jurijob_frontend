@@ -87,28 +87,28 @@ export function ProfessionalInfoSection({
 
   return (
     <section className="bg-white border-l-4 border-black shadow-sm">
-      <div className="px-6 py-5 border-b border-gray-200 flex items-center justify-between">
+      <div className="px-6 py-5 border-b border-gray-200 flex items-center justify-between gap-3 flex-wrap">
         <h2 className="text-black font-medium">
           Informations professionnelles
         </h2>
         {!isEditing ? (
           <button
             onClick={() => setIsEditing(true)}
-            className="flex items-center gap-2 text-sm text-gray-600 hover:text-black transition">
+            className="flex items-center gap-2 text-sm text-gray-600 hover:text-black transition w-full sm:w-auto justify-center">
             <Edit2 className="h-4 w-4" />
             Modifier
           </button>
         ) : (
-          <div className="flex gap-3">
+          <div className="flex gap-3 w-full sm:w-auto flex-col sm:flex-row">
             <button
               onClick={handleCancel}
-              className="flex items-center gap-1 px-3 py-1.5 text-sm text-gray-600 border border-gray-300 rounded-md hover:bg-gray-100">
+              className="flex items-center gap-1 px-3 py-1.5 text-sm text-gray-600 border border-gray-300 rounded-md hover:bg-gray-100 justify-center">
               <X className="h-4 w-4" />
               Annuler
             </button>
             <button
               onClick={handleSave}
-              className="flex items-center gap-1 px-3 py-1.5 text-sm bg-black text-white rounded-md hover:bg-gray-800">
+              className="flex items-center gap-1 px-3 py-1.5 text-sm bg-black text-white rounded-md hover:bg-gray-800 justify-center">
               <Check className="h-4 w-4" />
               Enregistrer
             </button>
@@ -119,7 +119,7 @@ export function ProfessionalInfoSection({
       <div className="p-6">
         {/* Form-style view with disabled fields when not editing */}
         <div className="space-y-7 max-w-4xl">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
             <div className="space-y-2">
               <label htmlFor="posteActuel" className="text-gray-700 text-sm">
                 Poste actuel
@@ -239,7 +239,7 @@ export function ProfessionalInfoSection({
                 ))
               )}
             </div>
-            <div className="flex gap-2">
+            <div className="flex gap-2 flex-col sm:flex-row">
               <input
                 value={newSpecialisation}
                 onChange={(e) =>
@@ -262,7 +262,7 @@ export function ProfessionalInfoSection({
                   !isEditing || !newSpecialisation.trim()
                     ? "border-gray-300 text-gray-400 cursor-not-allowed"
                     : "border-gray-900 text-gray-900 hover:bg-gray-900 hover:text-white"
-                }`}>
+                } justify-center`}>
                 <Plus className="h-4 w-4" />
                 Ajouter
               </button>
@@ -311,7 +311,7 @@ export function ProfessionalInfoSection({
                 ))
               )}
             </div>
-            <div className="flex gap-2">
+            <div className="flex gap-2 flex-col sm:flex-row">
               <input
                 value={newDomain}
                 onChange={(e) => isEditing && setNewDomain(e.target.value)}
@@ -332,7 +332,7 @@ export function ProfessionalInfoSection({
                   !isEditing || !newDomain.trim()
                     ? "border-gray-300 text-gray-400 cursor-not-allowed"
                     : "border-gray-900 text-gray-900 hover:bg-gray-900 hover:text-white"
-                }`}>
+                } justify-center`}>
                 <Plus className="h-4 w-4" />
                 Ajouter
               </button>
