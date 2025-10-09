@@ -136,7 +136,8 @@ export default function Dashboard() {
               preferences={{
                 typeTravailRecherche: profileData.typeTravailRecherche || "",
                 modeTravailRecherche: profileData.modeTravailRecherche || "",
-                villesTravailRecherche: profileData.villesTravailRecherche || [],
+                villesTravailRecherche:
+                  profileData.villesTravailRecherche || [],
               }}
               langues={profileData.langues as Language[]}
               onSavePreferences={handleSavePreferences}
@@ -157,8 +158,7 @@ export default function Dashboard() {
                   <Mail className="h-4 w-4 text-gray-500" />
                   <a
                     href="mailto:support@jurijob.com"
-                    className="hover:underline"
-                  >
+                    className="hover:underline">
                     support@jurijob.com
                   </a>
                 </div>
@@ -192,7 +192,9 @@ export default function Dashboard() {
             <section className="bg-white border shadow-sm p-5">
               <div className="flex items-center gap-2 mb-3">
                 <Lightbulb className="h-4 w-4 text-gray-600" />
-                <h3 className="text-black font-semibold">Optimiser votre profil</h3>
+                <h3 className="text-black font-semibold">
+                  Optimiser votre profil
+                </h3>
               </div>
               <ul className="list-disc pl-5 text-sm text-gray-700 space-y-2">
                 <li>Complétez vos informations personnelles</li>
