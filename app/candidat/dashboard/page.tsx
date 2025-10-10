@@ -60,7 +60,7 @@ export default function Dashboard() {
         // imageUrl is NOT on User model; update separately on Candidat
       };
       const res = await fetchWithAuth(
-        `/users/update-user/${profileData.userId}`,
+        `/users/update-user`,
         {
           method: "PATCH",
           body: JSON.stringify(payload),
@@ -93,7 +93,6 @@ export default function Dashboard() {
     if (!profileData) return;
     try {
       const payload = {
-        userId: profileData.userId,
         posteActuel: data.posteActuel,
         niveauExperience: data.niveauExperience,
         formationJuridique: data.formationJuridique,
@@ -119,7 +118,6 @@ export default function Dashboard() {
     if (!profileData) return;
     try {
       const payload = {
-        userId: profileData.userId,
         typeTravailRecherche: preferences.typeTravailRecherche,
         modeTravailRecherche: preferences.modeTravailRecherche,
         villesTravailRecherche: preferences.villesTravailRecherche,
