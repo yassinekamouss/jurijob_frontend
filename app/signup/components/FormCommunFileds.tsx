@@ -1,17 +1,14 @@
 import React, { useState } from 'react';
 import Icon from './FormularIcons';
+import { User } from '@/app/types/DataFormDataRegister';
+// import { Candidat } from '@/app/types/candidatFormDataRegister';
 
 interface CommonFieldsProps {
-  formData: {
-    firstName?: string;
-    lastName?: string;
-    email?: string;
-    phone?: string;
-    password?: string;
-    confirmPassword?: string;
-  };
-  onFieldChange: (field: string, value: string) => void;
-  errors?: Record<string, string>;
+
+  formData: User;
+
+  onFieldChange: (field: keyof User, value: any) => void;
+  errors: Partial<Record<keyof User, string>>;
   className?: string;
 }
 
@@ -25,7 +22,7 @@ const CommonFields: React.FC<CommonFieldsProps> = ({
   const [showConfirmPassword, setShowConfirmPassword] = useState<boolean>(false);
 
   const handleChange = (field: string, value: string) => {
-    onFieldChange(field, value);
+    onFieldChange(field as any, value);
   };
 
   const getPasswordStrength = (password: string) => {
@@ -72,13 +69,13 @@ const CommonFields: React.FC<CommonFieldsProps> = ({
           <input
             type="text"
             placeholder="Votre prénom"
-            value={formData.firstName || ''}
-            onChange={(e) => handleChange('firstName', e.target.value)}
+            value={formData.prenom || ''}
+            onChange={(e) => handleChange('prenom', e.target.value)}
             className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:outline-none"
             required
           />
-          {errors.firstName && (
-            <p className="text-xs text-red-500 mt-1">{errors.firstName}</p>
+          {errors.prenom && (
+            <p className="text-xs text-red-500 mt-1">{errors.prenom}</p>
           )}
         </div>
 
@@ -88,13 +85,13 @@ const CommonFields: React.FC<CommonFieldsProps> = ({
           <input
             type="text"
             placeholder="Votre nom"
-            value={formData.lastName || ''}
-            onChange={(e) => handleChange('lastName', e.target.value)}
+            value={formData.nom || ''}
+            onChange={(e) => handleChange('nom', e.target.value)}
             className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:outline-none"
             required
           />
-          {errors.lastName && (
-            <p className="text-xs text-red-500 mt-1">{errors.lastName}</p>
+          {errors.nom && (
+            <p className="text-xs text-red-500 mt-1">{errors.nom}</p>
           )}
         </div>
       </div>
@@ -122,12 +119,12 @@ const CommonFields: React.FC<CommonFieldsProps> = ({
         <input
           type="tel"
           placeholder="+33 1 23 45 67 89"
-          value={formData.phone || ''}
-          onChange={(e) => handleChange('phone', e.target.value)}
+          value={formData.telephone || ''}
+          onChange={(e) => handleChange('telephone', e.target.value)}
           className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:outline-none"
           required
         />
-        {errors.phone && <p className="text-xs text-red-500 mt-1">{errors.phone}</p>}
+        {errors.telephone && <p className="text-xs text-red-500 mt-1">{errors.telephone}</p>}
       </div>
 
       {/* --- MOT DE PASSE --- */}

@@ -1,9 +1,9 @@
 'use client';
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-
+import type FormData from '@/app/types/DataFormDataRegister';
 interface FormConfirmationProps {
-  formData: { [key: string]: any };
+  formData: FormData;
   onSubmit: () => void;
 }
 
@@ -12,7 +12,7 @@ const FormConfirmation: React.FC<FormConfirmationProps> = ({ formData, onSubmit 
   const [showModal, setShowModal] = useState(false);
 
   // Champs
-  const personalFields = ['firstName', 'lastName', 'email', 'phone', 'password'];
+  // const personalFields = ['firstName', 'lastName', 'email', 'phone', 'password'];
   // const professionalFields = ['experienceLevel', 'educationLevel', 'specializations', 'languages', 'openToOpportunities', 'remoteWork'];
 
   const handleSubmit = () => {
@@ -32,10 +32,10 @@ const FormConfirmation: React.FC<FormConfirmationProps> = ({ formData, onSubmit 
       <div className="border rounded-lg p-4 shadow-sm bg-white">
         <h3 className="font-semibold text-lg mb-3 border-b pb-1">Infos de votre compte</h3>
         <ul className="space-y-1">
-          {personalFields.map((field) => (
+          {Object.keys(formData.user).map((field) => (
             <li key={field} className="flex justify-between">
               <span className="font-medium capitalize">{field.replace(/([A-Z])/g, ' $1')}</span>
-              <span>{formData[field] || '-'}</span>
+              <span>{(formData.user as any)[field] || '-'}</span>
             </li>
           ))}
         </ul>

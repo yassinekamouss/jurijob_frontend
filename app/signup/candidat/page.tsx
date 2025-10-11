@@ -9,19 +9,75 @@ import { useState } from "react";
 import FormConfirmation from '@/app/signup/components/FormConfirmation';
 // import { form } from 'framer-motion/client';
 
-export default function CandidatSignUp() {
-  const [formData, setFormData] = useState<{ [key: string]: any }>({
-    role: "candidat", // valeur initiale
-  });
-  const [errors, setErrors] = useState<{ [key: string]: string }>({});
+import FormData from '@/app/types/DataFormDataRegister';
+import UserBase from '@/app/types/userBase';
+// import { console } from 'inspector';
+import candidat from '@/app/types/candidat';
 
-  const onFieldChange = (field: string, value: any) => {
-    setFormData((prev: { [key: string]: any }) => ({ ...prev, [field]: value }));
-    setErrors((prev: { [key: string]: string }) => ({ ...prev, [field]: '' }));
+export default function CandidatSignUp() {
+
+  const [formData, setFormData] = useState<FormData>({
+    user: {
+      nom: '',
+      prenom: '',
+      telephone: '',
+      email: '',
+      password: '',
+      confirmPassword: '',
+      role: 'candidat',
+    },
+    candidat: {
+      posteActuel: '',
+      niveauExperience: '',
+      formationJuridique: '',
+      specialisations: [],
+      langues: [],
+      domainExperiences: [],
+      typeTravailRecherche: '',
+      villesTravailRecherche: [],
+      modeTravailRecherche: '',
+      PosteRecherche: '',
+
+    },
+  });
+
+
+  type UserErrors = Partial<Record<keyof FormData['user'], string>>;
+  type CandidatErrors = Partial<Record<keyof FormData['candidat'], string>>;
+
+  const [errors, setErrors] = useState<{
+    user?: UserErrors;
+    candidat?: CandidatErrors;
+  }>({});
+
+  const onFieldChange = (
+    section: 'user' | 'candidat', // indique quelle partie du formData changer
+    field: string,
+    value: any
+  ) => {
+    setFormData(prev => ({
+      ...prev,
+      [section]: {
+        ...prev[section],
+        [field]: value,
+      },
+    }));
+
+    setErrors(prev => ({
+      ...prev,
+      [section]: {
+        ...(prev as any)[section],
+        [field]: '',
+      },
+    }));
   };
+
   const handleSubmit = () => {
     console.log('Formulaire soumis avec les données :', formData);
+    const user: UserBase = formData.user;
+    console.log('Données utilisateur prêtes pour l\'API :', user);
     // ici tu peux appeler ton API ou envoyer le formulaire
+    console.log('Données candidat prêtes pour l\'API :', formData.candidat);
   };
 
   // ✅ Validation selon l’étape
@@ -29,24 +85,18 @@ export default function CandidatSignUp() {
     let requiredFields: string[] = [];
     const newErrors: Record<string, string> = {};
     let valid = true;
+    let section: 'user' | 'candidat';
+
     if (step === 1) {
-      requiredFields = ["firstName", "lastName", "email", "phone", "password", "confirmPassword"];
+      requiredFields = ["nom", "prenom", "email", "telephone", "password", "confirmPassword"];
+      section = 'user';
 
-      requiredFields.forEach((field) => {
-        const value = formData[field];
-        if (!value || (typeof value === "string" && value.trim() === "")) {
-
-          newErrors[field] = "Ce champ est obligatoire";
-          valid = false;
-        }
-      });
-
-      if (formData.password && formData.confirmPassword) {
-        if (formData.password !== formData.confirmPassword) {
+      if (formData.user.password && formData.user.confirmPassword) {
+        if (formData.user.password !== formData.user.confirmPassword) {
           newErrors.confirmPassword = "Les mots de passe ne correspondent pas";
           valid = false;
         } else {
-          const password = formData.password.trim();
+          const password = formData.user.password.trim();
           const hasMinLength = password.length >= 8;
           const hasUppercase = /[A-Z]/.test(password);
           const hasLowercase = /[a-z]/.test(password);
@@ -58,31 +108,30 @@ export default function CandidatSignUp() {
               "Le mot de passe doit contenir au moins 8 caractères, majuscules, minuscules, chiffres et symboles";
             valid = false;
           }
-
         }
       }
+    } else if (step === 2) {
+      requiredFields = ["niveauExperience", "formationJuridique", "specialisations", "langues"];
+      section = 'candidat';
+
+      // const atLeastOneCheckboxChecked =
+      //   formData.candidat.typeTravailRecherche ||
+      //   formData.candidat.villesTravailRecherche.length > 0 ||
+      //   formData.candidat.modeTravailRecherche;
+
+      // if (!atLeastOneCheckboxChecked) {
+      //   newErrors.checkboxes = "Veuillez cocher au moins une option";
+      //   valid = false;
+      // }
+    } else {
+      return true; // rien à valider
     }
-    else if (step === 2) {
-      requiredFields = ["experienceLevel", "educationLevel", "specializations", "languages"];
-      // Vérifier au moins une checkbox
-      const atLeastOneCheckboxChecked =
-        formData.openToOpportunities ||
-        formData.activelySearching ||
-        formData.remoteWork ||
-        formData.geographicalMobility;
 
-      if (!atLeastOneCheckboxChecked) {
-        newErrors.checkboxes = "Veuillez cocher au moins une option";
-        valid = false;
-      }
-    }
-
-
-
-
-
+    // ✅ Validation générique
     requiredFields.forEach((field) => {
-      const value = formData[field];
+      const value = (formData[section] as any)[field as keyof (typeof formData)[typeof section]];
+      // ⬆ mais TypeScript n’aime pas trop ça, donc mieux de faire :
+      // const value = (formData[section] as Record<string, any>)[field];
 
       if (
         value === undefined ||
@@ -95,45 +144,94 @@ export default function CandidatSignUp() {
       }
     });
 
-    setErrors(newErrors);
+    setErrors(prev => ({
+      ...prev,
+      [section]: {
+        ...((prev as any)[section] || {}),
+        ...newErrors,
+      },
+    }));
+
     return valid;
   };
 
 
+  // const renderStep = (step: number) => {
+  //   switch (step) {
+  //     case 1:
+  //       return (
+
+
+  //         <form className="space-y-4">
+  //           <CommunFileds
+  //             formData={formData}
+  //             onFieldChange={onFieldChange}
+  //             errors={errors}
+  //           />
+
+  //         </form>
+  //       );
+  //     case 2:
+  //       return (
+
+  //         <form className="space-y-4">
+  //           <FormCandidat
+  //             formData={formData}
+  //             onFieldChange={onFieldChange}
+  //             errors={errors}
+  //           />
+  //         </form>
+  //       );
+  //     case 3:
+  //       return (
+  //         <FormConfirmation formData={formData} onSubmit={handleSubmit} />
+
+  //       );
+  //   }
+  // };
+
+  // return <NavigatorForm onNextStep={handleNextStepValidation}>{renderStep}</NavigatorForm>;
   const renderStep = (step: number) => {
     switch (step) {
       case 1:
         return (
-
-
           <form className="space-y-4">
             <CommunFileds
-              formData={formData}
-              onFieldChange={onFieldChange}
-              errors={errors}
+              formData={formData.user}          // ✅ on passe seulement la partie "user"
+              onFieldChange={(field, value) => onFieldChange('user', field, value)}
+              errors={errors.user || {}}        // ✅ uniquement les erreurs de user
             />
-
           </form>
         );
+
       case 2:
         return (
-
           <form className="space-y-4">
             <FormCandidat
-              formData={formData}
-              onFieldChange={onFieldChange}
-              errors={errors}
+              formData={formData.candidat as any}       // ✅ on passe seulement la partie "candidat"
+              onFieldChange={(field, value) => onFieldChange('candidat', field, value)}
+              errors={errors.candidat || {}}     // ✅ uniquement les erreurs de candidat
             />
           </form>
         );
+
       case 3:
         return (
-          <FormConfirmation formData={formData} onSubmit={handleSubmit} />
-
+          <FormConfirmation
+            formData={formData}
+            onSubmit={handleSubmit}
+          />
         );
+
+      default:
+        return null;
     }
   };
 
-  return <NavigatorForm onNextStep={handleNextStepValidation}>{renderStep}</NavigatorForm>;
+  return (
+    <NavigatorForm onNextStep={handleNextStepValidation}>
+      {renderStep}
+    </NavigatorForm>
+  );
 
 }

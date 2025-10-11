@@ -1,35 +1,29 @@
 import React from 'react';
+import { Recruteur } from '@/app/types/DataFormDataRegister';
 
 type Option = {
   value: string;
   label: string;
 };
 
-type FormData = {
-  companyName?: string;
-  position?: string;
-  companyType?: string;
-  companySize?: string;
-  companyWebsite?: string;
-  city?: string;
-  postalCode?: string;
-  recruitmentFocus?: string[];
-  urgentRecruitment?: boolean;
-  internationalProfiles?: boolean;
-  remotePositions?: boolean;
-  internships?: boolean;
-};
+
 
 type Errors = {
   [key: string]: string | undefined;
 };
 
-type RecruiterFieldsProps = {
-  formData: FormData;
-  onFieldChange: (field: keyof FormData, value: any) => void;
-  errors?: Errors;
+// type RecruiterFieldsProps = {
+//   formData: FormData;
+//   onFieldChange: (field: keyof FormData, value: any) => void;
+//   errors?: Errors;
+//   className?: string;
+// };
+interface RecruiterFieldsProps {
+  formData: Recruteur;
+  onFieldChange: (field: keyof Recruteur, value: any) => void;
+  errors: Partial<Record<keyof Recruteur, string>>;
   className?: string;
-};
+}
 
 const RecruiterFields: React.FC<RecruiterFieldsProps> = ({
   formData,
@@ -37,7 +31,7 @@ const RecruiterFields: React.FC<RecruiterFieldsProps> = ({
   errors = {},
   className = '',
 }) => {
-  const companyTypes: Option[] = [
+  const typeOrganisation: Option[] = [
     { value: 'cabinet-avocat', label: "Cabinet d'Avocats" },
     { value: 'entreprise', label: "Service Juridique d'Entreprise" },
     { value: 'cabinet-recrutement', label: 'Cabinet de Recrutement' },
@@ -47,7 +41,7 @@ const RecruiterFields: React.FC<RecruiterFieldsProps> = ({
     { value: 'autre', label: 'Autre' },
   ];
 
-  const companySizes: Option[] = [
+  const tailleEntreprise: Option[] = [
     { value: '1-10', label: '1-10 employés' },
     { value: '11-50', label: '11-50 employés' },
     { value: '51-200', label: '51-200 employés' },
@@ -66,9 +60,32 @@ const RecruiterFields: React.FC<RecruiterFieldsProps> = ({
     { value: 'compliance', label: 'Compliance Officers' },
     { value: 'stagiaires', label: 'Stagiaires en Droit' },
   ];
+  const ville : Option []= [
+    { value: 'casablanca', label: 'Casablanca' },
+    { value: 'rabat', label: 'Rabat' },
+    { value: 'marrakech', label: 'Marrakech' },
+    { value: 'fes', label: 'Fès' },
+    { value: 'tanger', label: 'Tanger' },
+    { value: 'agadir', label: 'Agadir' },
+    { value: 'meknes', label: 'Meknès' },
+    { value: 'oujda', label: 'Oujda' },
+    { value: 'tetouan', label: 'Tétouan' },
+    { value: 'el_jadida', label: 'El Jadida' },
+    { value: 'nador', label: 'Nador' },
+    { value: 'kenitra', label: 'Kénitra' },
+    { value: 'safi', label: 'Safi' },
+    { value: 'berkane', label: 'Berkane' },
+    { value: 'beni_mellal', label: 'Béni Mellal' },
+    { value: 'essaouira', label: 'Essaouira' },
+    { value: 'larache', label: 'Larache' },
+    { value: 'khouribga', label: 'Khouribga' },
+    { value: 'taza', label: 'Taza' },
+    { value: 'errachidia', label: 'Errachidia' },
+  ];
 
-  const handleChange = (field: keyof FormData, value: any) => {
-    onFieldChange(field, value);
+
+  const handleChange = (field: string, value: any) => {
+    onFieldChange(field as any, value);
   };
 
   return (
@@ -91,15 +108,15 @@ const RecruiterFields: React.FC<RecruiterFieldsProps> = ({
           <input
             type="text"
             placeholder="Nom de votre organisation"
-            value={formData.companyName || ''}
-            onChange={(e) => handleChange('companyName', e.target.value)}
+            value={formData.nomEntreprise || ''}
+            onChange={(e) => handleChange('nomEntreprise', e.target.value)}
             className="border border-gray-300 rounded-md w-full p-2"
             required
           />
-          {errors.companyName && <p className="text-red-500 text-sm">{errors.companyName}</p>}
+          {errors.nomEntreprise && <p className="text-red-500 text-sm">{errors.nomEntreprise}</p>}
         </div>
 
-        <div>
+        {/* <div>
           <label className="block text-sm font-medium text-gray-800">
             Votre poste *
           </label>
@@ -112,7 +129,7 @@ const RecruiterFields: React.FC<RecruiterFieldsProps> = ({
             required
           />
           {errors.position && <p className="text-red-500 text-sm">{errors.position}</p>}
-        </div>
+        </div> */}
       </div>
 
       {/* Type et taille */}
@@ -122,19 +139,19 @@ const RecruiterFields: React.FC<RecruiterFieldsProps> = ({
             Type d'organisation *
           </label>
           <select
-            value={formData.companyType || ''}
-            onChange={(e) => handleChange('companyType', e.target.value)}
+            value={formData.typeOrganisation || ''}
+            onChange={(e) => handleChange('typeOrganisation', e.target.value)}
             className="border border-gray-300 rounded-md w-full p-2"
             required
           >
             <option value="">Sélectionnez le type</option>
-            {companyTypes.map((opt) => (
+            {typeOrganisation.map((opt) => (
               <option key={opt.value} value={opt.value}>
                 {opt.label}
               </option>
             ))}
           </select>
-          {errors.companyType && <p className="text-red-500 text-sm">{errors.companyType}</p>}
+          {errors.typeOrganisation && <p className="text-red-500 text-sm">{errors.typeOrganisation}</p>}
         </div>
 
         <div>
@@ -142,19 +159,19 @@ const RecruiterFields: React.FC<RecruiterFieldsProps> = ({
             Taille de l'entreprise *
           </label>
           <select
-            value={formData.companySize || ''}
-            onChange={(e) => handleChange('companySize', e.target.value)}
+            value={formData.tailleEntreprise || ''}
+            onChange={(e) => handleChange('tailleEntreprise', e.target.value)}
             className="border border-gray-300 rounded-md w-full p-2"
             required
           >
             <option value="">Nombre d'employés</option>
-            {companySizes.map((opt) => (
+            {tailleEntreprise.map((opt) => (
               <option key={opt.value} value={opt.value}>
                 {opt.label}
               </option>
             ))}
           </select>
-          {errors.companySize && <p className="text-red-500 text-sm">{errors.companySize}</p>}
+          {errors.tailleEntreprise && <p className="text-red-500 text-sm">{errors.tailleEntreprise}</p>}
         </div>
       </div>
 
@@ -166,8 +183,8 @@ const RecruiterFields: React.FC<RecruiterFieldsProps> = ({
         <input
           type="url"
           placeholder="https://www.votre-entreprise.com"
-          value={formData.companyWebsite || ''}
-          onChange={(e) => handleChange('companyWebsite', e.target.value)}
+          value={formData.siteWeb || ''}
+          onChange={(e) => handleChange('siteWeb', e.target.value)}
           className="border border-gray-300 rounded-md w-full p-2"
         />
         <p className="text-gray-500 text-sm">Optionnel - Aide à valider votre profil</p>
@@ -180,8 +197,8 @@ const RecruiterFields: React.FC<RecruiterFieldsProps> = ({
           <input
             type="text"
             placeholder="Paris, Lyon, Marseille..."
-            value={formData.city || ''}
-            onChange={(e) => handleChange('city', e.target.value)}
+            value={formData.ville || ''}
+            onChange={(e) => handleChange('ville', e.target.value)}
             className="border border-gray-300 rounded-md w-full p-2"
             required
           />
@@ -192,8 +209,8 @@ const RecruiterFields: React.FC<RecruiterFieldsProps> = ({
           <input
             type="text"
             placeholder="75001"
-            value={formData.postalCode || ''}
-            onChange={(e) => handleChange('postalCode', e.target.value)}
+            value={formData.codePostal || ''}
+            onChange={(e) => handleChange('codePostal', e.target.value)}
             className="border border-gray-300 rounded-md w-full p-2"
             required
           />
@@ -201,21 +218,21 @@ const RecruiterFields: React.FC<RecruiterFieldsProps> = ({
       </div>
 
       {/* Profils recherchés */}
-      <div>
+      {/* <div>
         <label className="block text-sm font-medium text-gray-800">
           Profils recherchés *
         </label>
         <select
           multiple
-          value={formData.recruitmentFocus || []}
+          value={formData.recrutementFocus || []}
           onChange={(e) => {
             const values = Array.from(e.target.selectedOptions, (opt) => opt.value);
-            handleChange('recruitmentFocus', values);
+            handleChange('recrutementFocus', values);
           }}
           className="border border-gray-300 rounded-md w-full p-2 h-32"
           required
         >
-          {recruitmentFocus.map((opt) => (
+          {recrutementFocus.map((opt) => (
             <option key={opt.value} value={opt.value}>
               {opt.label}
             </option>
@@ -224,18 +241,18 @@ const RecruiterFields: React.FC<RecruiterFieldsProps> = ({
         <p className="text-gray-500 text-sm">
           Types de profils que vous recrutez habituellement
         </p>
-      </div>
+      </div> */}
 
       {/* Préférences de recrutement */}
-      <div className="space-y-4">
+      {/* <div className="space-y-4">
         <h4 className="font-medium text-gray-900">Préférences de recrutement</h4>
 
         <div className="grid gap-4 md:grid-cols-2">
           <label className="flex items-center space-x-2">
             <input
               type="checkbox"
-              checked={formData.urgentRecruitment || false}
-              onChange={(e) => handleChange('urgentRecruitment', e.target.checked)}
+              checked={formData.recrutementUrgent || false}
+              onChange={(e) => handleChange('recrutementUrgent', e.target.checked)}
             />
             <span>Recrutement urgent</span>
           </label>
@@ -243,8 +260,8 @@ const RecruiterFields: React.FC<RecruiterFieldsProps> = ({
           <label className="flex items-center space-x-2">
             <input
               type="checkbox"
-              checked={formData.internationalProfiles || false}
-              onChange={(e) => handleChange('internationalProfiles', e.target.checked)}
+              checked={formData.profilsInternationaux || false}
+              onChange={(e) => handleChange('profilsInternationaux', e.target.checked)}
             />
             <span>Profils internationaux</span>
           </label>
@@ -267,7 +284,7 @@ const RecruiterFields: React.FC<RecruiterFieldsProps> = ({
             <span>Stages et alternances</span>
           </label>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };

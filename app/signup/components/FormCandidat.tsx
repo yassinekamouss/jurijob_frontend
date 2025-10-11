@@ -1,3 +1,4 @@
+import { Candidat } from '@/app/types/DataFormDataRegister';
 import React from 'react';
 
 interface Option {
@@ -6,9 +7,9 @@ interface Option {
 }
 
 interface CandidateFieldsProps {
-  formData: Record<string, any>;
-  onFieldChange: (field: string, value: any) => void;
-  errors?: Record<string, string>;
+  formData: Candidat;
+  onFieldChange: (field: keyof Candidat, value: any) => void;
+  errors: Partial<Record<keyof Candidat, string>>;
   className?: string;
 }
 
@@ -18,7 +19,7 @@ const CandidateFields: React.FC<CandidateFieldsProps> = ({
   errors = {},
   className = '',
 }) => {
-  const specializations: Option[] = [
+  const specialisations: Option[] = [
     { value: 'droit-affaires', label: 'Droit des Affaires' },
     { value: 'droit-social', label: 'Droit Social' },
     { value: 'droit-fiscal', label: 'Droit Fiscal' },
@@ -31,7 +32,7 @@ const CandidateFields: React.FC<CandidateFieldsProps> = ({
     { value: 'droit-environnement', label: "Droit de l'Environnement" },
   ];
 
-  const experienceLevels: Option[] = [
+  const niveauExperience: Option[] = [
     { value: 'etudiant', label: 'Étudiant en Droit' },
     { value: 'junior', label: 'Junior (0-2 ans)' },
     { value: 'confirme', label: 'Confirmé (3-7 ans)' },
@@ -39,7 +40,7 @@ const CandidateFields: React.FC<CandidateFieldsProps> = ({
     { value: 'expert', label: 'Expert (15+ ans)' },
   ];
 
-  const educationLevels: Option[] = [
+  const formationJuridique: Option[] = [
     { value: 'licence', label: 'Licence en Droit' },
     { value: 'master1', label: 'Master 1 Droit' },
     { value: 'master2', label: 'Master 2 Droit' },
@@ -48,17 +49,140 @@ const CandidateFields: React.FC<CandidateFieldsProps> = ({
     { value: 'autre', label: 'Autre formation juridique' },
   ];
 
-  const languages: Option[] = [
+  const langues: Option[] = [
     { value: 'francais', label: 'Français' },
     { value: 'anglais', label: 'Anglais' },
     { value: 'espagnol', label: 'Espagnol' },
     { value: 'allemand', label: 'Allemand' },
     { value: 'italien', label: 'Italien' },
     { value: 'arabe', label: 'Arabe' },
+
   ];
 
+
+  // Type de travail recherché
+  const typeTravailRechercheOptions = [
+    { value: 'stage', label: 'Stage' },
+    { value: 'stage_preembauche', label: 'Stage préembauche' },
+    { value: 'embauche', label: 'Embauche' },
+  ];
+
+  // Villes du Maroc
+  const villesTravailRechercheOptions = [
+    { value: 'casablanca', label: 'Casablanca' },
+    { value: 'rabat', label: 'Rabat' },
+    { value: 'marrakech', label: 'Marrakech' },
+    { value: 'fes', label: 'Fès' },
+    { value: 'tanger', label: 'Tanger' },
+    { value: 'agadir', label: 'Agadir' },
+    { value: 'meknes', label: 'Meknès' },
+    { value: 'oujda', label: 'Oujda' },
+    { value: 'tetouan', label: 'Tétouan' },
+    { value: 'el_jadida', label: 'El Jadida' },
+    { value: 'nador', label: 'Nador' },
+    { value: 'kenitra', label: 'Kénitra' },
+    { value: 'safi', label: 'Safi' },
+    { value: 'berkane', label: 'Berkane' },
+    { value: 'beni_mellal', label: 'Béni Mellal' },
+    { value: 'essaouira', label: 'Essaouira' },
+    { value: 'larache', label: 'Larache' },
+    { value: 'khouribga', label: 'Khouribga' },
+    { value: 'taza', label: 'Taza' },
+    { value: 'errachidia', label: 'Errachidia' },
+  ];
+
+  // Mode de travail recherché
+  const modeTravailRechercheOptions = [
+    { value: 'sur_site', label: 'Sur site' },
+    { value: 'teletravail', label: 'Télétravail' },
+    { value: 'hybride', label: 'Hybride' },
+  ];
+
+
+  const domainExperiences: Option[] = [
+    { value: 'banque-finance', label: 'Banque & Finance' },
+    { value: 'technologie-numerique', label: 'Technologie & Numérique' },
+    { value: 'sante-pharmaceutique', label: 'Santé & Pharmaceutique' },
+    { value: 'energie-environnement', label: 'Énergie & Environnement' },
+    { value: 'immobilier-construction', label: 'Immobilier & Construction' },
+    { value: 'commerce-distribution', label: 'Commerce & Distribution' },
+    { value: 'industrie-manufacturing', label: 'Industrie & Manufacturing' },
+    { value: 'transport-logistique', label: 'Transport & Logistique' },
+    { value: 'medias-communication', label: 'Médias & Communication' },
+    { value: 'education-formation', label: 'Éducation & Formation' },
+    { value: 'conseil-services', label: 'Conseil & Services' },
+    { value: 'secteur-public', label: 'Secteur Public' }
+  ];
+
+
+
+  /*
+  const industries = [
+    { id: 'banking', label: 'Banque & Finance', icon: 'CreditCard' },
+    { id: 'technology', label: 'Technologie & Numérique', icon: 'Smartphone' },
+    { id: 'healthcare', label: 'Santé & Pharmaceutique', icon: 'Heart' },
+    { id: 'energy', label: 'Énergie & Environnement', icon: 'Zap' },
+    { id: 'real_estate', label: 'Immobilier & Construction', icon: 'Home' },
+    { id: 'retail', label: 'Commerce & Distribution', icon: 'ShoppingCart' },
+    { id: 'manufacturing', label: 'Industrie & Manufacturing', icon: 'Factory' },
+    { id: 'transport', label: 'Transport & Logistique', icon: 'Truck' },
+    { id: 'media', label: 'Médias & Communication', icon: 'Radio' },
+    { id: 'education', label: 'Éducation & Formation', icon: 'BookOpen' },
+    { id: 'consulting', label: 'Conseil & Services', icon: 'Users' },
+    { id: 'public_sector', label: 'Secteur Public', icon: 'Building' }
+  ];
+  */
+
+
+
+
+
+
+
+
+  const postes: Option[] = [
+    { value: 'avocat', label: 'Avocat' },
+    { value: 'juriste', label: 'Juriste' },
+    { value: 'assistant-juridique', label: 'Assistant Juridique' },
+    { value: 'conseil-juridique', label: 'Conseil Juridique' },
+  ];
+  /*
+  
+    value: 'Avocat',
+    label: 'Avocat'
+  [
+      {
+        id: 'lawyer',
+        title: 'Avocat',
+        description: 'Professionnel du droit inscrit au barreau',
+        icon: 'Scale',
+        requirements: ['Diplôme en droit', 'Inscription au barreau', 'Expérience en cabinet']
+      },
+      {
+        id: 'paralegal',
+        title: 'Juriste',
+        description: 'Spécialiste juridique en entreprise ou cabinet',
+        icon: 'FileText',
+        requirements: ['Formation juridique', 'Expérience pratique', 'Spécialisation sectorielle']
+      },
+      {
+        id: 'legal_assistant',
+        title: 'Assistant Juridique',
+        description: 'Support administratif et technique juridique',
+        icon: 'Users',
+        requirements: ['Formation administrative', 'Connaissance procédures', 'Outils bureautiques']
+      },
+      {
+        id: 'legal_counsel',
+        title: 'Conseil Juridique',
+        description: 'Consultant en droit des affaires',
+        icon: 'Briefcase',
+        requirements: ['Expertise sectorielle', 'Conseil stratégique', 'Relations clients']
+      }
+    ];
+  */
   const handleChange = (field: string, value: any) => {
-    onFieldChange(field, value);
+    onFieldChange(field as any, value);
   };
 
   return (
@@ -81,20 +205,20 @@ const CandidateFields: React.FC<CandidateFieldsProps> = ({
             Niveau d'expérience *
           </label>
           <select
-            value={formData.experienceLevel || ''}
-            onChange={(e) => handleChange('experienceLevel', e.target.value)}
+            value={formData.niveauExperience || ''}
+            onChange={(e) => handleChange('niveauExperience', e.target.value)}
             className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:outline-none"
             required
           >
             <option value="">Sélectionnez votre niveau</option>
-            {experienceLevels.map((opt) => (
+            {niveauExperience.map((opt) => (
               <option key={opt.value} value={opt.value}>
                 {opt.label}
               </option>
             ))}
           </select>
-          {errors.experienceLevel && (
-            <p className="text-xs text-red-500 mt-1">{errors.experienceLevel}</p>
+          {errors.niveauExperience && (
+            <p className="text-xs text-red-500 mt-1">{errors.niveauExperience}</p>
           )}
         </div>
 
@@ -104,20 +228,20 @@ const CandidateFields: React.FC<CandidateFieldsProps> = ({
             Formation juridique *
           </label>
           <select
-            value={formData.educationLevel || ''}
-            onChange={(e) => handleChange('educationLevel', e.target.value)}
+            value={formData.formationJuridique || ''}
+            onChange={(e) => handleChange('formationJuridique', e.target.value)}
             className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:outline-none"
             required
           >
             <option value="">Votre niveau d'études</option>
-            {educationLevels.map((opt) => (
+            {formationJuridique.map((opt) => (
               <option key={opt.value} value={opt.value}>
                 {opt.label}
               </option>
             ))}
           </select>
-          {errors.educationLevel && (
-            <p className="text-xs text-red-500 mt-1">{errors.educationLevel}</p>
+          {errors.formationJuridique && (
+            <p className="text-xs text-red-500 mt-1">{errors.formationJuridique}</p>
           )}
         </div>
       </div>
@@ -132,24 +256,24 @@ const CandidateFields: React.FC<CandidateFieldsProps> = ({
         </p>
         <select
           multiple
-          value={formData.specializations || []}
+          value={formData.specialisations || []}
           onChange={(e) =>
             handleChange(
-              'specializations',
+              'specialisations',
               Array.from(e.target.selectedOptions, (opt) => opt.value)
             )
           }
           className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:outline-none"
           required
         >
-          {specializations.map((opt) => (
+          {specialisations.map((opt) => (
             <option key={opt.value} value={opt.value}>
               {opt.label}
             </option>
           ))}
         </select>
-        {errors.specializations && (
-          <p className="text-xs text-red-500 mt-1">{errors.specializations}</p>
+        {errors.specialisations && (
+          <p className="text-xs text-red-500 mt-1">{errors.specialisations}</p>
         )}
       </div>
 
@@ -163,16 +287,16 @@ const CandidateFields: React.FC<CandidateFieldsProps> = ({
         </p>
         <select
           multiple
-          value={formData.languages || []}
+          value={formData.langues as any || []}
           onChange={(e) =>
             handleChange(
-              'languages',
+              'langues',
               Array.from(e.target.selectedOptions, (opt) => opt.value)
             )
           }
           className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:outline-none"
         >
-          {languages.map((opt) => (
+          {langues.map((opt) => (
             <option key={opt.value} value={opt.value}>
               {opt.label}
             </option>
@@ -180,7 +304,7 @@ const CandidateFields: React.FC<CandidateFieldsProps> = ({
         </select>
       </div>
 
-      {/* --- CHECKBOXES --- */}
+      {/* --- CHECKBOXES ---
       <div className="space-y-4">
         <h4 className="font-medium text-gray-900">Préférences de recherche</h4>
 
@@ -228,7 +352,128 @@ const CandidateFields: React.FC<CandidateFieldsProps> = ({
             </label>
           ))}
         </div>
+      </div> */}
+
+      {/* Poste recherché */}
+      <div>
+        <label className="block text-sm font-medium text-gray-700">
+          Poste recherché *
+        </label>
+        <select
+          value={formData.PosteRecherche || ''}
+          onChange={(e) => handleChange('PosteRecherche', e.target.value)}
+          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:outline-none"
+          required
+        >
+          <option value="">Sélectionnez un poste</option>
+          {postes.map((opt) => (
+            <option key={opt.value} value={opt.value}>
+              {opt.label}
+            </option>
+          ))}
+        </select>
+        {errors.PosteRecherche && (
+          <p className="text-xs text-red-500 mt-1">{errors.PosteRecherche}</p>
+        )}
       </div>
+
+      {/* Domaine d'expérience */}
+      <div>
+        <label className="block text-sm font-medium text-gray-700">
+          Domaine d'expérience *
+        </label>
+        <select
+          value={formData.domainExperiences || ''}
+          onChange={(e) => handleChange('domainExperiences', e.target.value)}
+          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:outline-none"
+          required
+        >
+          <option value="">Sélectionnez un domaine</option>
+          {domainExperiences.map((opt) => (
+            <option key={opt.value} value={opt.value}>
+              {opt.label}
+            </option>
+          ))}
+        </select>
+        {errors.domainExperiences && (
+          <p className="text-xs text-red-500 mt-1">{errors.domainExperiences}</p>
+        )}
+      </div>
+
+      {/* Type de travail recherché */}
+      <div>
+        <label className="block text-sm font-medium text-gray-700">
+          Type de travail recherché *
+        </label>
+        <select
+          value={formData.typeTravailRecherche || ''}
+          onChange={(e) => handleChange('typeTravailRecherche', e.target.value)}
+          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:outline-none"
+          required
+        >
+          <option value="">Sélectionnez un type</option>
+          {typeTravailRechercheOptions.map((opt) => (
+            <option key={opt.value} value={opt.value}>
+              {opt.label}
+            </option>
+          ))}
+        </select>
+        {errors.typeTravailRecherche && (
+          <p className="text-xs text-red-500 mt-1">{errors.typeTravailRecherche}</p>
+        )}
+      </div>
+
+      {/* Mode de travail recherché */}
+      <div>
+        <label className="block text-sm font-medium text-gray-700">
+          Mode de travail recherché *
+        </label>
+        <select
+          value={formData.modeTravailRecherche || ''}
+          onChange={(e) => handleChange('modeTravailRecherche', e.target.value)}
+          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:outline-none"
+          required
+        >
+          <option value="">Sélectionnez un mode</option>
+          {modeTravailRechercheOptions.map((opt) => (
+            <option key={opt.value} value={opt.value}>
+              {opt.label}
+            </option>
+          ))}
+        </select>
+        {errors.modeTravailRecherche && (
+          <p className="text-xs text-red-500 mt-1">{errors.modeTravailRecherche}</p>
+        )}
+      </div>
+
+      {/* Villes souhaitées */}
+      <div>
+        <label className="block text-sm font-medium text-gray-700">
+          Villes souhaitées *
+        </label>
+        <select
+          multiple
+          value={formData.villesTravailRecherche || []}
+          onChange={(e) =>
+            handleChange(
+              'villesTravailRecherche',
+              Array.from(e.target.selectedOptions, (option) => option.value)
+            )
+          }
+          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:outline-none"
+          required
+        >
+          {villesTravailRechercheOptions.map((opt) => (
+            <option key={opt.value} value={opt.value}>
+              {opt.label}
+            </option>
+          ))}
+        </select>
+        {errors.villesTravailRecherche && (
+          <p className="text-xs text-red-500 mt-1">{errors.villesTravailRecherche}</p>
+        )}
+      </div>
+
     </div>
   );
 };

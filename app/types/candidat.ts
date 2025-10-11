@@ -4,7 +4,7 @@ import UserBase from "./userBase";
 
 export default interface Candidat extends UserBase {
   userId: string;
-  posteActuel: string;
+  PosteRecherche: string;
   niveauExperience: string;
   formationJuridique: string;
   specialisations: string[];

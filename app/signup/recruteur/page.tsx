@@ -2,49 +2,85 @@
 import NavigatorForm from '@/app/signup/components/FormNavigator';
 import CommunFileds from '@/app/signup/components/FormCommunFileds';
 
-import FormRecuiter from '@/app/signup/components/FormRecuiter';
+import FormRecruteur from '@/app/signup/components/FormRecuiter';
+import UserBase from '@/app/types/userBase';
 
 import { useState } from "react";
 import FormConfirmation from '../components/FormConfirmation';
-const handleSubmit = () => {
-  console.log('Formulaire soumis avec les données :');
-  // ici tu peux appeler ton API ou envoyer le formulaire
-};
+import FormData from '@/app/types/DataFormDataRegister';
+// import recruteur from '@/app/types/recruteur';
+
+
 export default function RecruteurSignUp() {
-  const [formData, setFormData] = useState<{ [key: string]: any }>({
-    role: "recruteur", // valeur initiale
+  const [formData, setFormData] = useState<FormData>({
+    user: {
+      nom: '',
+      prenom: '',
+      telephone: '',
+      email: '',
+      password: '',
+      confirmPassword: '',
+      role: 'recruteur',
+    },
+    recruteur: {
+      nomEntreprise: '',
+      poste: '',
+      typeOrganisation: '',
+      tailleEntreprise: '',
+      siteWeb: '',
+      ville: '',
+      codePostal: '',
+    },
   });
+  const handleSubmit = () => {
+    console.log('Formulaire soumis avec les données :', formData);
+    const user: UserBase = formData.user;
+    console.log('Données utilisateur prêtes pour l\'API :', user);
+    // ici tu peux appeler ton API ou envoyer le formulaire
+    const recruteur = formData.recruteur;
+    console.log('Données recruteur prêtes pour l\'API :', recruteur);
+  };
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
-  const onFieldChange = (field: string, value: any) => {
-    setFormData((prev: { [key: string]: any }) => ({ ...prev, [field]: value }));
-    setErrors((prev: { [key: string]: string }) => ({ ...prev, [field]: '' }));
-  };
 
+  const onFieldChange = (
+    section: 'user' | 'recruteur', // indique quelle partie du formData changer
+    field: string,
+    value: any
+  ) => {
+    setFormData(prev => ({
+      ...prev,
+      [section]: {
+        ...prev[section],
+        [field]: value,
+      },
+    }));
+
+    setErrors(prev => ({
+      ...prev,
+      [section]: {
+        ...(prev as any)[section],
+        [field]: '',
+      },
+    }));
+  };
   // ✅ Validation selon l’étape
   const handleNextStepValidation = (step: number): boolean => {
     let requiredFields: string[] = [];
     const newErrors: Record<string, string> = {};
     let valid = true;
+    let section: 'user' | 'recruteur';
 
     if (step === 1) {
-      requiredFields = ["firstName", "lastName", "email", "phone", "password", "confirmPassword"];
+      requiredFields = ["nom", "prenom", "email", "telephone", "password", "confirmPassword"];
+      section = 'user';
 
-      requiredFields.forEach((field) => {
-        const value = formData[field];
-        if (!value || (typeof value === "string" && value.trim() === "")) {
-
-          newErrors[field] = "Ce champ est obligatoire";
-          valid = false;
-        }
-      });
-
-      if (formData.password && formData.confirmPassword) {
-        if (formData.password !== formData.confirmPassword) {
+      if (formData.user.password && formData.user.confirmPassword) {
+        if (formData.user.password !== formData.user.confirmPassword) {
           newErrors.confirmPassword = "Les mots de passe ne correspondent pas";
           valid = false;
         } else {
-          const password = formData.password.trim();
+          const password = formData.user.password.trim();
           const hasMinLength = password.length >= 8;
           const hasUppercase = /[A-Z]/.test(password);
           const hasLowercase = /[a-z]/.test(password);
@@ -56,27 +92,31 @@ export default function RecruteurSignUp() {
               "Le mot de passe doit contenir au moins 8 caractères, majuscules, minuscules, chiffres et symboles";
             valid = false;
           }
-
         }
       }
     }
 
     else if (step === 2) {
       requiredFields = [
-        "companyName",
-        "position",
-        "companyType",
-        "companySize",
-        "city",
-        "postalCode",
-        "recruitmentFocus"
+        "nomEntreprise",
+        "typeOrganisation",
+        "tailleEntreprise",
+        // "siteWeb",
+        "ville",
+        "codePostal",
       ];
+      section = 'recruteur';
+    } else {
+      return true; // rien à valider
     }
 
 
 
+    // ✅ Validation générique
     requiredFields.forEach((field) => {
-      const value = formData[field];
+      const value = (formData[section] as any)[field as keyof (typeof formData)[typeof section]];
+      // ⬆ mais TypeScript n’aime pas trop ça, donc mieux de faire :
+      // const value = (formData[section] as Record<string, any>)[field];
 
       if (
         value === undefined ||
@@ -89,7 +129,14 @@ export default function RecruteurSignUp() {
       }
     });
 
-    setErrors(newErrors);
+    setErrors(prev => ({
+      ...prev,
+      [section]: {
+        ...((prev as any)[section] || {}),
+        ...newErrors,
+      },
+    }));
+
     return valid;
   };
 
@@ -100,9 +147,9 @@ export default function RecruteurSignUp() {
         return (
           <form className="space-y-4">
             <CommunFileds
-              formData={formData}
-              onFieldChange={onFieldChange}
-              errors={errors}
+              formData={formData.user}          // ✅ on passe seulement la partie "user"
+              onFieldChange={(field, value) => onFieldChange('user', field, value)}
+              errors={errors.user as any || {}}        // ✅ uniquement les erreurs de user
             />
           </form>
         );
@@ -110,13 +157,14 @@ export default function RecruteurSignUp() {
         return (
 
           <form className="space-y-4">
-            <FormRecuiter
-              formData={formData}
-              onFieldChange={onFieldChange}
-              errors={errors}
+            <FormRecruteur
+              formData={formData.recruteur as any}          // ✅ on passe seulement la partie "recruteur"
+              onFieldChange={(field, value) => onFieldChange('recruteur', field, value)}
+              errors={errors.recruteur as any || {}}        // ✅ uniquement les erreurs de recruteur
             />
           </form>
         );
+
       case 3:
         return (
           <FormConfirmation formData={formData} onSubmit={handleSubmit} />
