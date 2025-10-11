@@ -278,31 +278,59 @@ const CandidateFields: React.FC<CandidateFieldsProps> = ({
       </div>
 
       {/* --- LANGUES --- */}
-      <div>
-        <label className="block text-sm font-medium text-gray-700">
-          Langues parlées
-        </label>
-        <p className="text-xs text-gray-500 mb-1">
-          Indiquez les langues que vous maîtrisez
-        </p>
-        <select
-          multiple
-          value={formData.langues as any || []}
-          onChange={(e) =>
-            handleChange(
-              'langues',
-              Array.from(e.target.selectedOptions, (opt) => opt.value)
-            )
-          }
-          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:outline-none"
-        >
-          {langues.map((opt) => (
-            <option key={opt.value} value={opt.value}>
-              {opt.label}
-            </option>
-          ))}
-        </select>
-      </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700">
+            Langues parlées *
+          </label>
+          <p className="text-xs text-gray-500 mb-1">
+            Indiquez les langues que vous maîtrisez et leur niveau
+          </p>
+          <select
+            multiple
+            value={formData.langues.map(l => l.nom) || []} // prend juste le nom
+            onChange={(e) => {
+              const selected = Array.from(e.target.selectedOptions, opt => opt.value);
+              
+              // Conserver les niveaux déjà choisis
+              const updatedLangues = selected.map(lang => {
+                const existing = formData.langues.find(l => l.nom === lang);
+                return { nom: lang, niveau: existing?.niveau || '' }; // niveau vide par défaut
+              });
+
+              handleChange('langues', updatedLangues);
+            }}
+            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:outline-none"
+          >
+            {langues.map((opt) => (
+              <option key={opt.value} value={opt.value}>
+                {opt.label}
+              </option>
+            ))}
+          </select>
+        </div>
+        {formData.langues.map((lang, index) => (
+  <div key={lang.nom} className="mt-2">
+    <label className="block text-sm font-medium text-gray-700">
+      Niveau de {lang.nom.charAt(0).toUpperCase() + lang.nom.slice(1)}
+    </label>
+    <select
+      value={lang.niveau}
+      onChange={(e) => {
+        const updatedLangues = [...formData.langues];
+        updatedLangues[index].niveau = e.target.value;
+        handleChange('langues', updatedLangues);
+      }}
+      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:outline-none"
+    >
+      <option value="">Sélectionnez le niveau</option>
+      {['A1','A2','B1','B2','C1','C2'].map(n => (
+        <option key={n} value={n}>{n}</option>
+      ))}
+    </select>
+  </div>
+))}
+
+
 
       {/* --- CHECKBOXES ---
       <div className="space-y-4">
