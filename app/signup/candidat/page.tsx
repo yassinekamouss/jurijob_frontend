@@ -10,9 +10,9 @@ import FormConfirmation from '@/app/signup/components/FormConfirmation';
 // import { form } from 'framer-motion/client';
 
 import FormData from '@/app/types/DataFormDataRegister';
-import UserBase from '@/app/types/userBase';
+// import UserBase from '@/app/types/userBase';
 // import { console } from 'inspector';
-import candidat from '@/app/types/candidat';
+// import candidat from '@/app/types/candidat';
 
 export default function CandidatSignUp() {
 
@@ -27,7 +27,7 @@ export default function CandidatSignUp() {
       role: 'candidat',
     },
     candidat: {
-      posteActuel: '',
+      // posteActuel: '',
       niveauExperience: '',
       formationJuridique: '',
       specialisations: [],
@@ -72,12 +72,54 @@ export default function CandidatSignUp() {
     }));
   };
 
-  const handleSubmit = () => {
-    console.log('Formulaire soumis avec les données :', formData);
-    const user: UserBase = formData.user;
-    console.log('Données utilisateur prêtes pour l\'API :', user);
-    // ici tu peux appeler ton API ou envoyer le formulaire
-    console.log('Données candidat prêtes pour l\'API :', formData.candidat);
+  const handleSubmit = async () => {
+
+
+    try {
+
+      // console.log('Formulaire soumis avec les données :', formData);
+
+      const { confirmPassword, ...user } = formData.user;
+
+      console.log('Données utilisateur prêtes pour l\'API :', user);
+
+      // Étape 2 : envoyer le user à l’API
+      const userResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/register`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(user),
+      });
+      if (!userResponse.ok) {
+        const errorText = await userResponse.text();
+        console.error("Réponse serveur (err):", errorText);
+        throw new Error("Erreur lors de la création de l'utilisateur");
+      }
+
+      const createdUser = await userResponse.json();
+      const userId = createdUser.userId; // dépend de ta réponse API (par ex. `createdUser.data.id`)
+      console.log("Utilisateur créé avec succès :", createdUser);
+      // Étape 3 : préparer les données du candidat
+      // Étape 3 : préparer les données du candidat
+      const candidatData = {
+        ...formData.candidat,
+        userId: userId,
+      };
+
+      // Étape 4 : envoyer le candidat à l’API
+      const candidatResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/candidats/complete-profile`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(candidatData),
+      });
+      if (!candidatResponse.ok) throw new Error("Erreur lors de la création du candidat");
+
+      // ici tu peux appeler ton API ou envoyer le formulaire
+      console.log('Données candidat prêtes pour l\'API :', candidatData);
+    } catch (error) {
+      console.error("Erreur lors de l’envoi du formulaire :", error);
+    }
+
+
   };
 
   // ✅ Validation selon l’étape

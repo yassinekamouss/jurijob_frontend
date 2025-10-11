@@ -11,7 +11,7 @@ export interface User {
 }
 
 export interface Candidat {
-  posteActuel: string;
+  // posteActuel: string;
   niveauExperience: string;
   formationJuridique: string;
   specialisations: string[];

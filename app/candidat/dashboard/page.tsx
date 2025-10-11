@@ -194,7 +194,7 @@ export default function Dashboard() {
 
             <ProfessionalInfoSection
               data={{
-                posteActuel: profileData.posteActuel || "",
+                posteActuel: profileData.PosteRecherche || "",
                 niveauExperience: profileData.niveauExperience || "",
                 formationJuridique: profileData.formationJuridique || "",
                 specialisations: profileData.specialisations || [],
