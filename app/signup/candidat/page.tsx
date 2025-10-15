@@ -99,7 +99,6 @@ export default function CandidatSignUp() {
       const userId = createdUser.userId; // dépend de ta réponse API (par ex. `createdUser.data.id`)
       console.log("Utilisateur créé avec succès :", createdUser);
       // Étape 3 : préparer les données du candidat
-      // Étape 3 : préparer les données du candidat
       const candidatData = {
         ...formData.candidat,
         userId: userId,
