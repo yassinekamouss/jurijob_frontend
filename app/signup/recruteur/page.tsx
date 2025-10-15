@@ -3,7 +3,7 @@ import NavigatorForm from '@/app/signup/components/FormNavigator';
 import CommunFileds from '@/app/signup/components/FormCommunFileds';
 
 import FormRecruteur from '@/app/signup/components/FormRecuiter';
-import UserBase from '@/app/types/userBase';
+import {User} from'@/app/types/DataFormDataRegister'
 
 import { useState } from "react";
 import FormConfirmation from '../components/FormConfirmation';
@@ -18,6 +18,7 @@ export default function RecruteurSignUp() {
       prenom: '',
       telephone: '',
       email: '',
+      imageUrl:'',
       password: '',
       confirmPassword: '',
       role: 'recruteur',
@@ -34,7 +35,7 @@ export default function RecruteurSignUp() {
   });
   const handleSubmit = () => {
     console.log('Formulaire soumis avec les données :', formData);
-    const user: UserBase = formData.user;
+    const user: User = formData.user;
     console.log('Données utilisateur prêtes pour l\'API :', user);
     // ici tu peux appeler ton API ou envoyer le formulaire
     const recruteur = formData.recruteur;
