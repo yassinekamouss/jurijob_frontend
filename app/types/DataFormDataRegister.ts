@@ -5,6 +5,7 @@ export interface User {
   prenom: string;
   telephone: string;
   email: string;
+  imageUrl?: string | File;
   password: string; // optionnel si tu ne l’envoies pas côté frontend
   confirmPassword: string; // uniquement pour validation locale
   role: "candidat" | "recruteur" ;

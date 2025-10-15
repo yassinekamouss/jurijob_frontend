@@ -61,6 +61,46 @@ const CommonFields: React.FC<CommonFieldsProps> = ({
         </p>
       </div>
 
+
+      {/* --- IMAGE DE PROFIL --- */}
+<div className="flex flex-col items-center">
+  <label className="block text-sm font-medium text-gray-700 mb-2">
+    Photo de profil
+  </label>
+
+      {/* Aperçu de l'image */}
+      {formData.imageUrl && (
+        <img
+          src={
+            typeof formData.imageUrl === "string"
+              ? formData.imageUrl // si c’est déjà une URL (Cloudinary)
+              : URL.createObjectURL(formData.imageUrl) // si c’est un fichier local
+          }
+          alt="Aperçu du profil"
+          className="w-24 h-24 rounded-full object-cover mb-3 shadow-md"
+        />
+      )}
+
+      <input
+        type="file"
+        accept="image/*"
+        onChange={(e) => {
+          const file = e.target.files?.[0];
+          if (file) {
+            onFieldChange("imageUrl", file);
+          }
+        }}
+        className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4
+          file:rounded-md file:border-0 file:text-sm file:font-semibold
+          file:bg-black file:text-white hover:file:bg-gray-800"
+      />
+      {errors.imageUrl && (
+        <p className="text-xs text-red-500 mt-1">{errors.imageUrl}</p>
+      )}
+    </div>
+
+
+
       {/* --- NOM / PRENOM --- */}
       <div className="grid gap-6 md:grid-cols-2">
         {/* Prénom */}

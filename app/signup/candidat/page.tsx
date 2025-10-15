@@ -9,7 +9,7 @@ import { useState } from "react";
 import FormConfirmation from '@/app/signup/components/FormConfirmation';
 // import { form } from 'framer-motion/client';
 
-import FormData from '@/app/types/DataFormDataRegister';
+import type FormData from '@/app/types/DataFormDataRegister';
 // import UserBase from '@/app/types/userBase';
 // import { console } from 'inspector';
 // import candidat from '@/app/types/candidat';
@@ -22,6 +22,7 @@ export default function CandidatSignUp() {
       prenom: '',
       telephone: '',
       email: '',
+      imageUrl:'',
       password: '',
       confirmPassword: '',
       role: 'candidat',
@@ -81,14 +82,31 @@ export default function CandidatSignUp() {
 
       const { confirmPassword, ...user } = formData.user;
 
-      console.log('Données utilisateur prêtes pour l\'API :', user);
+
+          // Étape 1 — préparer FormData
+    
+    // Étape 1 : préparer FormData
+    const formDataToSend = new FormData();
+
+    // Ajouter tous les champs texte sauf "imageUrl"
+    Object.entries(user).forEach(([key, value]) => {
+      if (key !== "imageUrl" && value !== undefined && value !== null) {
+        formDataToSend.append(key, value as string);
+      }
+    });
+
+    // Ajouter le fichier sous le champ "image" attendu par Multer
+    if (user.imageUrl && user.imageUrl instanceof File) {
+      formDataToSend.append("image", user.imageUrl);
+    }
+
+    console.log("Données utilisateur prêtes pour l'API :", user);
 
       // Étape 2 : envoyer le user à l’API
-      const userResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/register`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(user),
-      });
+     const userResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/register`, {
+      method: "POST",
+      body: formDataToSend,
+    });
       if (!userResponse.ok) {
         const errorText = await userResponse.text();
         console.error("Réponse serveur (err):", errorText);

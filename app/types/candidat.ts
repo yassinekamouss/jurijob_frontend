@@ -9,7 +9,6 @@ export default interface Candidat extends UserBase {
   formationJuridique: string;
   specialisations: string[];
   langues: Language[];
-  imageUrl?: string;
   domainExperiences: string[],
   typeTravailRecherche: string,
   villesTravailRecherche: string[],
