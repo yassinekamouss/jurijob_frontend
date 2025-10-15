@@ -3,7 +3,7 @@ import NavigatorForm from '@/app/signup/components/FormNavigator';
 import CommunFileds from '@/app/signup/components/FormCommunFileds';
 
 import FormRecruteur from '@/app/signup/components/FormRecuiter';
-import UserBase from '@/app/types/userBase';
+import {User} from'@/app/types/DataFormDataRegister'
 
 import { useState } from "react";
 import FormConfirmation from '../components/FormConfirmation';
@@ -18,6 +18,7 @@ export default function RecruteurSignUp() {
       prenom: '',
       telephone: '',
       email: '',
+      imageUrl:'',
       password: '',
       confirmPassword: '',
       role: 'recruteur',
@@ -77,6 +78,7 @@ export default function RecruteurSignUp() {
     } catch (error) {
       console.error("Erreur lors de l’envoi du formulaire :", error);
     }
+
 
 
   };

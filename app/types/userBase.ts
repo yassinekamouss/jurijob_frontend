@@ -4,7 +4,8 @@ export default interface UserBase {
   prenom: string;
   telephone: string;
   email: string;
-  password?: string; // optionnel si tu ne l’envoies pas côté frontend
+  password?: string; // optionnel 
+  imageUrl?: string;
   role: "candidat" | "recruteur" | "admin";
   isActive?: boolean;
   isArchived?: boolean;
