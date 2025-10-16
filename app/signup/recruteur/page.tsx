@@ -33,13 +33,54 @@ export default function RecruteurSignUp() {
       codePostal: '',
     },
   });
-  const handleSubmit = () => {
-    console.log('Formulaire soumis avec les données :', formData);
-    const user: User = formData.user;
-    console.log('Données utilisateur prêtes pour l\'API :', user);
-    // ici tu peux appeler ton API ou envoyer le formulaire
-    const recruteur = formData.recruteur;
-    console.log('Données recruteur prêtes pour l\'API :', recruteur);
+ const handleSubmit = async () => {
+
+
+    try {
+
+      // console.log('Formulaire soumis avec les données :', formData);
+
+      const { confirmPassword, ...user } = formData.user;
+
+      console.log('Données utilisateur prêtes pour l\'API :', user);
+
+      // Étape 2 : envoyer le user à l’API
+      const userResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/register`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(user),
+      });
+      if (!userResponse.ok) {
+        const errorText = await userResponse.text();
+        console.error("Réponse serveur (err):", errorText);
+        throw new Error("Erreur lors de la création de l'utilisateur");
+      }
+
+      const createdUser = await userResponse.json();
+      const userId = createdUser.userId; // dépend de ta réponse API (par ex. `createdUser.data.id`)
+      console.log("Utilisateur créé avec succès :", createdUser);
+      // Étape 3 : préparer les données du recruteur
+      const recruteurForm = {
+        ...formData.recruteur,
+        userId: userId,
+      };
+      console.log('Données recruteur prêtes pour l\'API :', recruteurForm);
+      // Étape 4 : envoyer le recruteur à l’API
+      const recruteurResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/recruteurs/complete-profile`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(recruteurForm),
+      });
+      if (!recruteurResponse.ok) throw new Error("Erreur lors de la création du recruteur");
+
+      // ici tu peux appeler ton API ou envoyer le formulaire
+      console.log('Données recruteur prêtes pour l\'API :', recruteurForm);
+    } catch (error) {
+      console.error("Erreur lors de l’envoi du formulaire :", error);
+    }
+
+
+
   };
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
