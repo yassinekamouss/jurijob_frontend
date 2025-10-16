@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Edit2, Check, X, User, Mail, Power } from "lucide-react";
 import { PersonalInfo } from "@/app/types/personalInfo";
 import NativeAvatar from "./NativeAvatar";
@@ -12,6 +12,13 @@ export function PersonalInfoSection({
 }) {
   const [isEditing, setIsEditing] = useState(false);
   const [editedData, setEditedData] = useState(data);
+
+   const [previewImage, setPreviewImage] = useState<string | null>(null);
+
+  useEffect(() => {
+    setEditedData(data);
+    setPreviewImage(null);
+  }, [data]);
 
   const handleSave = () => {
     onSave(editedData);
@@ -69,7 +76,13 @@ export function PersonalInfoSection({
           <div className="flex items-start gap-4 sm:gap-6">
             <div className="flex-shrink-0">
               <NativeAvatar
-                src={viewData.imageUrl}
+                src={
+                  previewImage
+                    ? previewImage
+                    : viewData.imageUrl instanceof File
+                    ? URL.createObjectURL(viewData.imageUrl)
+                    : viewData.imageUrl
+              }
                 fallbackText={displayInitials}
                 className="h-20 w-20 sm:h-24 sm:w-24 border-2 border-gray-300"
                 fallbackClassName="bg-gray-900 text-white text-xl"
@@ -79,19 +92,23 @@ export function PersonalInfoSection({
             <div className="flex-1 space-y-4">
               <div className="space-y-2">
                 <label
-                  htmlFor="imageUrl"
+                  htmlFor="imageFile"
                   className="text-sm font-medium text-gray-700">
                   Photo de profil
                 </label>
                 <input
-                  id="imageUrl"
-                  value={viewData.imageUrl || ""}
-                  onChange={(e) =>
-                    isEditing &&
-                    setEditedData({ ...editedData, imageUrl: e.target.value })
-                  }
-                  placeholder="https://exemple.com/photo.jpg"
+                  id="imageFile"
+                  type="file"
+                  accept="image/*"
                   disabled={!isEditing}
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file && isEditing) {
+                      const previewUrl = URL.createObjectURL(file);
+                      setPreviewImage(previewUrl);
+                      setEditedData({ ...editedData, imageUrl: file });
+                    }
+                  }}
                   className={`flex h-10 w-full rounded-md border bg-transparent px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 transition-colors ${
                     isEditing
                       ? "border-gray-300"

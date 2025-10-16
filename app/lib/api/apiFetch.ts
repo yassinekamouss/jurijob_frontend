@@ -5,8 +5,10 @@ export async function apiFetch(
   options: RequestInit = {},
   accessToken?: string | null
 ): Promise<Response> {
+ const isFormData = options.body instanceof FormData;
+
   const headers: Record<string, string> = {
-    "Content-Type": "application/json",
+    ...(isFormData ? {} : { "Content-Type": "application/json" }),
     ...(options.headers as Record<string, string>),
   };
 
