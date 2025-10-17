@@ -10,6 +10,7 @@ import FormConfirmation from '@/app/signup/components/FormConfirmation';
 // import { form } from 'framer-motion/client';
 
 import type FormData from '@/app/types/DataFormDataRegister';
+import Header from '@/app/components/Header';
 // import UserBase from '@/app/types/userBase';
 // import { console } from 'inspector';
 // import candidat from '@/app/types/candidat';
@@ -288,9 +289,13 @@ export default function CandidatSignUp() {
   };
 
   return (
+    <div>
+    <Header/>
+  
     <NavigatorForm onNextStep={handleNextStepValidation}>
       {renderStep}
     </NavigatorForm>
+      </div>
   );
 
 }
