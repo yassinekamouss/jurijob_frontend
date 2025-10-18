@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import type FormData from "@/app/types/DataFormDataRegister";
-import CustomModal from "@/app/components/CustomModal"; // chemin à ajuster selon ton arborescence
+import CustomModal from "@/app/components/CustomModal";
 
 interface FormConfirmationProps {
   formData: FormData;
@@ -13,26 +13,38 @@ const FormConfirmation: React.FC<FormConfirmationProps> = ({ formData, onSubmit 
   const router = useRouter();
   const [modal, setModal] = useState({
     isOpen: false,
-    showLoading: false, 
+    showLoading: false,
     type: "success" as "success" | "error",
     title: "",
     message: "",
   });
 
   const handleSubmit = async () => {
+    // 🟡 Affiche le chargement pendant l’envoi
+    setModal((prev) => ({
+      ...prev,
+      isOpen: true,
+      showLoading: true,
+      title: "Création du compte...",
+      message: "Veuillez patienter pendant l’envoi de vos informations.",
+    }));
+
     try {
-      await onSubmit(); // Appel au backend
+      await onSubmit();
+
+      // ✅ Succès → on désactive le chargement et on affiche le message
       setModal({
         isOpen: true,
-        showLoading : true,
+        showLoading: false,
         type: "success",
         title: "Compte créé avec succès !",
         message: "Vous pouvez maintenant vous connecter avec vos identifiants.",
       });
     } catch (error: any) {
+      // ❌ Erreur → idem mais avec message d’erreur
       setModal({
         isOpen: true,
-        showLoading : true,
+        showLoading: false,
         type: "error",
         title: "Erreur lors de l’inscription",
         message: error.message || "Une erreur est survenue. Veuillez réessayer.",
@@ -49,7 +61,7 @@ const FormConfirmation: React.FC<FormConfirmationProps> = ({ formData, onSubmit 
     <div className="space-y-6 max-w-xl mx-auto">
       <h2 className="text-2xl font-bold text-center mb-6">Vérification des informations</h2>
 
-      {/* ✅ Infos du compte */}
+      {/* ✅ Infos de l’utilisateur */}
       <div className="border rounded-lg p-4 shadow-sm bg-white">
         <h3 className="font-semibold text-lg mb-3 border-b pb-1">Infos de votre compte</h3>
         <ul className="space-y-1">
@@ -91,11 +103,11 @@ const FormConfirmation: React.FC<FormConfirmationProps> = ({ formData, onSubmit 
         </button>
       </div>
 
-      {/*  Modal (succès ou erreur) */}
+      {/* ✅ Modal */}
       <CustomModal
         isOpen={modal.isOpen}
         type={modal.type}
-        showLoading={true}
+        showLoading={modal.showLoading}
         title={modal.title}
         message={modal.message}
         onClose={handleModalClose}
