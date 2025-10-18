@@ -1,24 +1,48 @@
-'use client';
-import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import type FormData from '@/app/types/DataFormDataRegister';
+"use client";
+import React, { useState } from "react";
+import { useRouter } from "next/navigation";
+import type FormData from "@/app/types/DataFormDataRegister";
+import CustomModal from "@/app/components/CustomModal"; // chemin à ajuster selon ton arborescence
 
 interface FormConfirmationProps {
   formData: FormData;
-  onSubmit: () => void;
+  onSubmit: () => Promise<void>;
 }
 
 const FormConfirmation: React.FC<FormConfirmationProps> = ({ formData, onSubmit }) => {
   const router = useRouter();
-  const [showModal, setShowModal] = useState(false);
+  const [modal, setModal] = useState({
+    isOpen: false,
+    showLoading: false, 
+    type: "success" as "success" | "error",
+    title: "",
+    message: "",
+  });
 
-  const handleSubmit = () => {
-    onSubmit();
-    setShowModal(true);
+  const handleSubmit = async () => {
+    try {
+      await onSubmit(); // Appel au backend
+      setModal({
+        isOpen: true,
+        showLoading : true,
+        type: "success",
+        title: "Compte créé avec succès !",
+        message: "Vous pouvez maintenant vous connecter avec vos identifiants.",
+      });
+    } catch (error: any) {
+      setModal({
+        isOpen: true,
+        showLoading : true,
+        type: "error",
+        title: "Erreur lors de l’inscription",
+        message: error.message || "Une erreur est survenue. Veuillez réessayer.",
+      });
+    }
   };
 
-  const handleLoginRedirect = () => {
-    router.push('/login');
+  const handleModalClose = () => {
+    setModal({ ...modal, isOpen: false });
+    if (modal.type === "success") router.push("/login");
   };
 
   return (
@@ -32,35 +56,24 @@ const FormConfirmation: React.FC<FormConfirmationProps> = ({ formData, onSubmit 
           {Object.keys(formData.user).map((field) => {
             const value = (formData.user as any)[field];
 
-            // ✅ Cas spécial pour l'image
-            if (field === 'imageUrl') {
+            if (field === "imageUrl") {
               if (!value) return null;
-
               return (
                 <li key={field} className="flex flex-col items-center gap-2">
                   <span className="font-medium capitalize">Photo de profil</span>
-                  {value instanceof File ? (
-                    <img
-                      src={URL.createObjectURL(value)}
-                      alt="Aperçu de l'image"
-                      className="w-24 h-24 object-cover rounded-full border"
-                    />
-                  ) : (
-                    <img
-                      src={value}
-                      alt="Image existante"
-                      className="w-24 h-24 object-cover rounded-full border"
-                    />
-                  )}
+                  <img
+                    src={value instanceof File ? URL.createObjectURL(value) : value}
+                    alt="Aperçu de l'image"
+                    className="w-24 h-24 object-cover rounded-full border"
+                  />
                 </li>
               );
             }
 
-            // ✅ Pour les autres champs
             return (
               <li key={field} className="flex justify-between">
-                <span className="font-medium capitalize">{field.replace(/([A-Z])/g, ' $1')}</span>
-                <span>{value || '-'}</span>
+                <span className="font-medium capitalize">{field.replace(/([A-Z])/g, " $1")}</span>
+                <span>{value || "-"}</span>
               </li>
             );
           })}
@@ -78,21 +91,16 @@ const FormConfirmation: React.FC<FormConfirmationProps> = ({ formData, onSubmit 
         </button>
       </div>
 
-      {/* ✅ Modal de succès */}
-      {showModal && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-30 z-50">
-          <div className="bg-white rounded-lg shadow-lg max-w-sm w-full p-6 text-center">
-            <h2 className="text-xl font-bold mb-4">Compte créé avec succès !</h2>
-            <p className="mb-6">Vous pouvez maintenant vous connecter avec vos identifiants.</p>
-            <button
-              onClick={handleLoginRedirect}
-              className="bg-black text-white px-4 py-2 rounded hover:bg-gray-800 transition-colors"
-            >
-              Je me connecte
-            </button>
-          </div>
-        </div>
-      )}
+      {/*  Modal (succès ou erreur) */}
+      <CustomModal
+        isOpen={modal.isOpen}
+        type={modal.type}
+        showLoading={true}
+        title={modal.title}
+        message={modal.message}
+        onClose={handleModalClose}
+        confirmText={modal.type === "success" ? "Je me connecte" : "Fermer"}
+      />
     </div>
   );
 };

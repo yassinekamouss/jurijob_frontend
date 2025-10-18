@@ -83,8 +83,6 @@ export default function CandidatSignUp() {
 
       const { confirmPassword, ...user } = formData.user;
 
-
-          // Étape 1 — préparer FormData
     
     // Étape 1 : préparer FormData
     const formDataToSend = new FormData();
@@ -108,11 +106,22 @@ export default function CandidatSignUp() {
       method: "POST",
       body: formDataToSend,
     });
-      if (!userResponse.ok) {
-        const errorText = await userResponse.text();
-        console.error("Réponse serveur (err):", errorText);
-        throw new Error("Erreur lors de la création de l'utilisateur");
+     if (!userResponse.ok) {
+        let errorMsg = "Erreur lors de la création de l'utilisateur";
+        try {
+          const errorData = await userResponse.json(); //  on essaye de parser le JSON
+          if (errorData.message) {
+            errorMsg = errorData.message; //  on récupère le vrai message du backend
+          }
+        } catch {
+          const errorText = await userResponse.text(); // fallback si ce n'est pas du JSON
+          errorMsg = errorText || errorMsg;
+        }
+
+        console.error("Réponse serveur (err):", errorMsg);
+        throw new Error(errorMsg); // on lance le vrai message
       }
+
 
       const createdUser = await userResponse.json();
       const userId = createdUser.userId; // dépend de ta réponse API (par ex. `createdUser.data.id`)
@@ -129,16 +138,20 @@ export default function CandidatSignUp() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(candidatData),
       });
-      if (!candidatResponse.ok) throw new Error("Erreur lors de la création du candidat");
+    
 
-      // ici tu peux appeler ton API ou envoyer le formulaire
-      console.log('Données candidat prêtes pour l\'API :', candidatData);
-    } catch (error) {
-      console.error("Erreur lors de l’envoi du formulaire :", error);
+  if (!candidatResponse.ok) {
+      const errorText = await candidatResponse.text();
+      console.error("Erreur backend candidat :", errorText);
+      throw new Error(errorText || "Erreur lors de la création du candidat");
     }
 
-
-  };
+    console.log("Candidat créé avec succès !");
+  } catch (error) {
+    console.error("Erreur lors de l’envoi du formulaire :", error);
+    throw error; // relance l'erreur vers FormConfirmation
+  }
+};
 
   // ✅ Validation selon l’étape
   const handleNextStepValidation = (step: number): boolean => {
