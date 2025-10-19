@@ -1,12 +1,6 @@
 import React from 'react';
 import { Recruteur } from '@/app/types/DataFormDataRegister';
-
-type Option = {
-  value: string;
-  label: string;
-};
-
-
+import {  typeOrganisation , tailleEntreprise , recruitmentFocus} from '@/app/constants/options';
 
 type Errors = {
   [key: string]: string | undefined;
@@ -31,58 +25,6 @@ const RecruiterFields: React.FC<RecruiterFieldsProps> = ({
   errors = {},
   className = '',
 }) => {
-  const typeOrganisation: Option[] = [
-    { value: 'cabinet-avocat', label: "Cabinet d'Avocats" },
-    { value: 'entreprise', label: "Service Juridique d'Entreprise" },
-    { value: 'cabinet-recrutement', label: 'Cabinet de Recrutement' },
-    { value: 'administration', label: 'Administration Publique' },
-    { value: 'association', label: 'Association/ONG' },
-    { value: 'startup', label: 'Startup/Scale-up' },
-    { value: 'autre', label: 'Autre' },
-  ];
-
-  const tailleEntreprise: Option[] = [
-    { value: '1-10', label: '1-10 employés' },
-    { value: '11-50', label: '11-50 employés' },
-    { value: '51-200', label: '51-200 employés' },
-    { value: '201-500', label: '201-500 employés' },
-    { value: '501-1000', label: '501-1000 employés' },
-    { value: '1000+', label: 'Plus de 1000 employés' },
-  ];
-
-  const recruitmentFocus: Option[] = [
-    { value: 'avocats', label: 'Avocats' },
-    { value: 'juristes', label: "Juristes d'Entreprise" },
-    { value: 'paralegaux', label: 'Paralegaux' },
-    { value: 'assistants-juridiques', label: 'Assistants Juridiques' },
-    { value: 'notaires', label: 'Notaires' },
-    { value: 'huissiers', label: 'Huissiers' },
-    { value: 'compliance', label: 'Compliance Officers' },
-    { value: 'stagiaires', label: 'Stagiaires en Droit' },
-  ];
-  const ville : Option []= [
-    { value: 'casablanca', label: 'Casablanca' },
-    { value: 'rabat', label: 'Rabat' },
-    { value: 'marrakech', label: 'Marrakech' },
-    { value: 'fes', label: 'Fès' },
-    { value: 'tanger', label: 'Tanger' },
-    { value: 'agadir', label: 'Agadir' },
-    { value: 'meknes', label: 'Meknès' },
-    { value: 'oujda', label: 'Oujda' },
-    { value: 'tetouan', label: 'Tétouan' },
-    { value: 'el_jadida', label: 'El Jadida' },
-    { value: 'nador', label: 'Nador' },
-    { value: 'kenitra', label: 'Kénitra' },
-    { value: 'safi', label: 'Safi' },
-    { value: 'berkane', label: 'Berkane' },
-    { value: 'beni_mellal', label: 'Béni Mellal' },
-    { value: 'essaouira', label: 'Essaouira' },
-    { value: 'larache', label: 'Larache' },
-    { value: 'khouribga', label: 'Khouribga' },
-    { value: 'taza', label: 'Taza' },
-    { value: 'errachidia', label: 'Errachidia' },
-  ];
-
 
   const handleChange = (field: string, value: any) => {
     onFieldChange(field as any, value);
@@ -146,8 +88,8 @@ const RecruiterFields: React.FC<RecruiterFieldsProps> = ({
           >
             <option value="">Sélectionnez le type</option>
             {typeOrganisation.map((opt) => (
-              <option key={opt.value} value={opt.value}>
-                {opt.label}
+              <option key={opt} value={opt}>
+                {opt}
               </option>
             ))}
           </select>
@@ -166,8 +108,8 @@ const RecruiterFields: React.FC<RecruiterFieldsProps> = ({
           >
             <option value="">Nombre d'employés</option>
             {tailleEntreprise.map((opt) => (
-              <option key={opt.value} value={opt.value}>
-                {opt.label}
+              <option key={opt} value={opt}>
+                {opt}
               </option>
             ))}
           </select>

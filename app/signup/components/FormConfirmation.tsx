@@ -20,7 +20,7 @@ const FormConfirmation: React.FC<FormConfirmationProps> = ({ formData, onSubmit 
   });
 
   const handleSubmit = async () => {
-    // 🟡 Affiche le chargement pendant l’envoi
+    // Affiche le chargement pendant l’envoi
     setModal((prev) => ({
       ...prev,
       isOpen: true,
