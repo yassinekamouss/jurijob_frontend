@@ -1,3 +1,5 @@
+// 📁 app/recruteur/demandes/hooks/useDemandes.ts
+
 "use client";
 
 import { useState, useEffect } from "react";
@@ -5,11 +7,7 @@ import { useAuth } from "@/app/context/AuthContext";
 import type Demande from "@/app/types/Demande";
 import type DemandesResponse from "@/app/types/DemandesResponse";
 
-/**
- * Hook professionnel pour gérer la récupération et la pagination des demandes.
- * Réutilisable dans n'importe quel composant.
- */
-export function useDemandes(limit = 4) {
+export function useDemandes(limit = 4 , filters: Record<string, any> = {}) {
   const { fetchWithAuth, user } = useAuth();
 
   const [demandes, setDemandes] = useState<Demande[]>([]);
@@ -18,16 +16,21 @@ export function useDemandes(limit = 4) {
   const [total, setTotal] = useState(0);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchDemandes = async (currentPage: number) => {
+  const fetchDemandes = async (currentPage: number, currentFilters = filters) => {
     if (!user) return;
 
     setLoading(true);
     setError(null);
 
     try {
-      const res = await fetchWithAuth(
-        `/demandes/recruteur/allDemandes?page=${currentPage}&limit=${limit}`
-      );
+ 
+      const queryParams = new URLSearchParams({ page: String(page), limit: String(limit) });
+    Object.entries(filters).forEach(([key, value]) => {
+      if (Array.isArray(value)) value.forEach((v) => queryParams.append(key, v));
+      else if (value) queryParams.append(key, value.toString());
+    });
+
+      const res = await fetchWithAuth(`/demandes/recruteur/allDemandes?${queryParams}`);
 
       if (!res.ok) throw new Error("Erreur lors de la récupération des demandes");
 
@@ -43,8 +46,8 @@ export function useDemandes(limit = 4) {
   };
 
   useEffect(() => {
-    fetchDemandes(page);
-  }, [user, page]);
+    fetchDemandes(page, filters);
+  }, [user, page, filters]);
 
   return {
     demandes,
@@ -54,6 +57,6 @@ export function useDemandes(limit = 4) {
     total,
     limit,
     setPage,
-    refresh: () => fetchDemandes(page),
+    onRefresh: () => fetchDemandes(page, filters),
   };
 }

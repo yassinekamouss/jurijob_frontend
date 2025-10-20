@@ -6,9 +6,17 @@ import Pagination from "@/app/components/Pagination";
 import { Briefcase } from "lucide-react";
 
 import { useDemandes } from "../hooks/useDemandes";
+import DemandesFilter from "./DemandesFilter";
 
-const DemandesList: React.FC = () => {
-  const { demandes, loading, error, page, total, limit, setPage } = useDemandes(4);
+
+interface DemandesListProps {
+  filters: Record<string, any>;
+}
+
+const DemandesList: React.FC<DemandesListProps> = ({ filters }) => {
+  const { demandes, loading, page, total, limit, setPage } = useDemandes(4, filters);
+
+  
 
   if (loading) {
     return (
@@ -32,6 +40,8 @@ const DemandesList: React.FC = () => {
       </div>
     );
   }
+
+  
 
 return (
   <div>
