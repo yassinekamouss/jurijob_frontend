@@ -5,7 +5,7 @@ export async function apiFetch(
   options: RequestInit = {},
   accessToken?: string | null
 ): Promise<Response> {
- const isFormData = options.body instanceof FormData;
+  const isFormData = options.body instanceof FormData;
 
   const headers: Record<string, string> = {
     ...(isFormData ? {} : { "Content-Type": "application/json" }),
@@ -20,7 +20,7 @@ export async function apiFetch(
   const res = await fetch(`${API_URL}${endpoint}`, {
     ...options,
     headers,
-    credentials: "include", 
+    credentials: "include",
   });
 
   return res;
