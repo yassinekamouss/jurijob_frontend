@@ -1,5 +1,4 @@
-// export const API_URL = process.env.NEXT_PUBLIC_API_URL;
-export const API_URL = "https://jurijobbackend-086b718701d1.herokuapp.com";
+export const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export async function apiFetch(
   endpoint: string,
