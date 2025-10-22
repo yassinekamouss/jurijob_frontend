@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import Icon from './FormularIcons';
 import { User } from '@/app/types/DataFormDataRegister';
 // import { Candidat } from '@/app/types/candidatFormDataRegister';
@@ -20,6 +20,9 @@ const CommonFields: React.FC<CommonFieldsProps> = ({
 }) => {
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState<boolean>(false);
+  const [dragActive, setDragActive] = useState<boolean>(false);
+  const [localImgError, setLocalImgError] = useState<string | null>(null);
+  const inputRef = useRef<HTMLInputElement | null>(null);
 
   const handleChange = (field: string, value: string) => {
     onFieldChange(field as any, value);
@@ -49,6 +52,53 @@ const CommonFields: React.FC<CommonFieldsProps> = ({
 
   const passwordStrength = getPasswordStrength(formData.password || '');
 
+  const formatBytes = (bytes: number) => {
+    if (!bytes) return '0 B';
+    const sizes = ['B', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(1024));
+    return `${(bytes / Math.pow(1024, i)).toFixed(1)} ${sizes[i]} }`;
+  };
+
+  const validateAndSetImage = (file: File | undefined | null) => {
+    if (!file) {
+      onFieldChange('imageUrl', '');
+      setLocalImgError(null);
+      return;
+    }
+    const allowed = ['image/jpeg', 'image/png', 'image/webp'];
+    const maxBytes = 3 * 1024 * 1024; // 3MB
+    if (!allowed.includes(file.type)) {
+      setLocalImgError('Formats acceptés: JPG, PNG, WebP');
+      return;
+    }
+    if (file.size > maxBytes) {
+      setLocalImgError('La taille maximale est 3 MB');
+      return;
+    }
+    setLocalImgError(null);
+    onFieldChange('imageUrl', file);
+  };
+
+  const onDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
+    const file = e.dataTransfer.files?.[0];
+    validateAndSetImage(file);
+  };
+
+  const onDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(true);
+  };
+
+  const onDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
+  };
+
   return (
     <div className={`space-y-6 ${className}`}>
       {/* --- HEADER --- */}
@@ -62,42 +112,85 @@ const CommonFields: React.FC<CommonFieldsProps> = ({
       </div>
 
 
-      {/* --- IMAGE DE PROFIL --- */}
-<div className="flex flex-col items-center">
-  <label className="block text-sm font-medium text-gray-700 mb-2">
-    Photo de profil
-  </label>
+      {/* --- IMAGE DE PROFIL (amélioré) --- */}
+      <div className="flex flex-col">
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          Photo de profil
+        </label>
 
-      {/* Aperçu de l'image */}
-      {formData.imageUrl && (
-        <img
-          src={
-            typeof formData.imageUrl === "string"
-              ? formData.imageUrl // si c’est déjà une URL (Cloudinary)
-              : URL.createObjectURL(formData.imageUrl) // si c’est un fichier local
-          }
-          alt="Aperçu du profil"
-          className="w-24 h-24 rounded-full object-cover mb-3 shadow-md"
-        />
-      )}
+        <div
+          onDrop={onDrop}
+          onDragOver={onDragOver}
+          onDragLeave={onDragLeave}
+          className={`relative w-full rounded-xl border-2 transition-all ${
+            dragActive ? 'border-primary bg-primary/5' : 'border-dashed border-border bg-input-background'
+          }`}
+        >
+          <div className="flex items-center gap-4 p-4">
+            {/* Aperçu */}
+            <div className="h-16 w-16 rounded-full overflow-hidden border border-border bg-muted flex items-center justify-center">
+              {formData.imageUrl ? (
+                <img
+                  src={
+                    typeof formData.imageUrl === 'string'
+                      ? formData.imageUrl
+                      : URL.createObjectURL(formData.imageUrl)
+                  }
+                  alt="Aperçu du profil"
+                  className="h-full w-full object-cover"
+                />
+              ) : (
+                <Icon name="UserRound" size={28} className="text-muted-foreground" />
+              )}
+            </div>
 
-      <input
-        type="file"
-        accept="image/*"
-        onChange={(e) => {
-          const file = e.target.files?.[0];
-          if (file) {
-            onFieldChange("imageUrl", file);
-          }
-        }}
-        className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4
-          file:rounded-md file:border-0 file:text-sm file:font-semibold
-          file:bg-black file:text-white hover:file:bg-gray-800"
-      />
-      {errors.imageUrl && (
-        <p className="text-xs text-red-500 mt-1">{errors.imageUrl}</p>
-      )}
-    </div>
+            {/* Texte et actions */}
+            <div className="flex-1 min-w-0">
+              <p className="text-sm text-foreground font-medium">Glissez-déposez une image ici</p>
+              <p className="text-xs text-muted-foreground">PNG, JPG, WebP – max 3MB</p>
+              {(formData.imageUrl instanceof File) && (
+                <p className="mt-1 text-xs text-muted-foreground truncate">
+                  {(formData.imageUrl as File).name} · {formatBytes((formData.imageUrl as File).size)}
+                </p>
+              )}
+            </div>
+
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => inputRef.current?.click()}
+                className="inline-flex items-center gap-2 rounded-lg bg-primary text-primary-foreground px-3 py-2 text-sm hover:opacity-90 transition"
+              >
+                <Icon name="Camera" size={18} />
+                Choisir une photo
+              </button>
+              {formData.imageUrl && (
+                <button
+                  type="button"
+                  onClick={() => validateAndSetImage(null)}
+                  className="inline-flex items-center gap-2 rounded-lg bg-muted text-foreground px-3 py-2 text-sm hover:opacity-90 transition"
+                >
+                  <Icon name="Trash2" size={18} />
+                  Supprimer
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* Input caché */}
+          <input
+            ref={inputRef}
+            type="file"
+            accept="image/png,image/jpeg,image/webp"
+            onChange={(e) => validateAndSetImage(e.target.files?.[0])}
+            className="hidden"
+          />
+        </div>
+
+        {(errors.imageUrl || localImgError) && (
+          <p className="text-xs text-red-500 mt-2">{localImgError || errors.imageUrl}</p>
+        )}
+      </div>
 
 
 

@@ -29,19 +29,19 @@ export default function NavigatorForm({ children, onNextStep }: NavigatorFormPro
       <ProgressIndicator currentStep={currentStep} />
 
       {/* ✅ Contenu dynamique (selon l’étape actuelle) */}
-      <div className="w-full max-w-xl bg-white border border-gray-300 rounded-xl p-6 shadow-md mt-4">
+      <div className="w-full max-w-2xl bg-card border border-border rounded-xl p-6 shadow-md mt-2">
         {children(currentStep)}
       </div>
 
       {/* ✅ Boutons de navigation */}
-      <div className="flex justify-between w-full max-w-xl mt-6">
+      <div className="flex justify-between w-full max-w-2xl mt-6">
         <button
           onClick={prevStep}
           disabled={currentStep === 1}
-          className={`px-4 py-2 border rounded-lg ${currentStep === 1
-            ? 'text-gray-400 border-gray-300 cursor-not-allowed'
-            : 'text-black border-black hover:bg-black hover:text-white'
-            } transition-all`}
+          className={`px-4 py-2 rounded-lg transition-all ${currentStep === 1
+            ? 'bg-muted text-muted-foreground cursor-not-allowed'
+            : 'bg-secondary text-secondary-foreground hover:opacity-90'
+            }`}
         >
           Précédent
         </button>
@@ -49,10 +49,10 @@ export default function NavigatorForm({ children, onNextStep }: NavigatorFormPro
         <button
           onClick={nextStep}
           disabled={currentStep === 3}
-          className={`px-4 py-2 border rounded-lg ${currentStep === 3
-            ? 'text-gray-400 border-gray-300 cursor-not-allowed'
-            : 'text-black border-black hover:bg-black hover:text-white'
-            } transition-all`}
+          className={`px-4 py-2 rounded-lg transition-all ${currentStep === 3
+            ? 'bg-muted text-muted-foreground cursor-not-allowed'
+            : 'bg-primary text-primary-foreground hover:opacity-90'
+            }`}
         >
           Suivant
         </button>
