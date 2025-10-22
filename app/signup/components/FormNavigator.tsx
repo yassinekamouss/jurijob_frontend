@@ -1,14 +1,16 @@
-'use client';
+"use client";
 import { useState, ReactNode } from "react";
-import ProgressIndicator from './ProgressionIndicator';
-
+import ProgressIndicator from "./ProgressionIndicator";
 
 interface NavigatorFormProps {
   children: (currentStep: number) => ReactNode;
   onNextStep: (currentStep: number) => boolean; // ✅ fonction de validation
 }
 
-export default function NavigatorForm({ children, onNextStep }: NavigatorFormProps) {
+export default function NavigatorForm({
+  children,
+  onNextStep,
+}: NavigatorFormProps) {
   const [currentStep, setCurrentStep] = useState(1);
 
   const nextStep = () => {
@@ -38,22 +40,22 @@ export default function NavigatorForm({ children, onNextStep }: NavigatorFormPro
         <button
           onClick={prevStep}
           disabled={currentStep === 1}
-          className={`px-4 py-2 rounded-lg transition-all ${currentStep === 1
-            ? 'bg-muted text-muted-foreground cursor-not-allowed'
-            : 'bg-secondary text-secondary-foreground hover:opacity-90'
-            }`}
-        >
+          className={`px-4 py-2 rounded-lg transition-all ${
+            currentStep === 1
+              ? "bg-muted text-muted-foreground cursor-not-allowed"
+              : "bg-secondary text-secondary-foreground hover:opacity-90"
+          }`}>
           Précédent
         </button>
 
         <button
           onClick={nextStep}
           disabled={currentStep === 3}
-          className={`px-4 py-2 rounded-lg transition-all ${currentStep === 3
-            ? 'bg-muted text-muted-foreground cursor-not-allowed'
-            : 'bg-primary text-primary-foreground hover:opacity-90'
-            }`}
-        >
+          className={`px-4 py-2 rounded-lg transition-all ${
+            currentStep === 3
+              ? "bg-muted text-muted-foreground cursor-not-allowed"
+              : "bg-primary text-primary-foreground hover:opacity-90"
+          }`}>
           Suivant
         </button>
       </div>

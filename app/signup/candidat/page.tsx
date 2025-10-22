@@ -1,46 +1,43 @@
-'use client';
+"use client";
 
-import NavigatorForm from '@/app/signup/components/FormNavigator';
-import CommunFileds from '@/app/signup/components/FormCommunFileds';
-import FormCandidat from '@/app/signup/components/FormCandidat';
-import FormConfirmation from '@/app/signup/components/FormConfirmation';
-import Header from '@/app/components/Header';
-import Icon from '@/app/signup/components/FormularIcons';
+import NavigatorForm from "@/app/signup/components/FormNavigator";
+import CommunFileds from "@/app/signup/components/FormCommunFileds";
+import FormCandidat from "@/app/signup/components/FormCandidat";
+import FormConfirmation from "@/app/signup/components/FormConfirmation";
+import Header from "@/app/components/Header";
+import Icon from "@/app/signup/components/FormularIcons";
 
-import { useState } from 'react';
-import type FormData from '@/app/types/DataFormDataRegister';
+import { useState } from "react";
+import type FormData from "@/app/types/DataFormDataRegister";
 
 export default function CandidatSignUp() {
-
   const [formData, setFormData] = useState<FormData>({
     user: {
-      nom: '',
-      prenom: '',
-      telephone: '',
-      email: '',
-      imageUrl:'',
-      password: '',
-      confirmPassword: '',
-      role: 'candidat',
+      nom: "",
+      prenom: "",
+      telephone: "",
+      email: "",
+      imageUrl: "",
+      password: "",
+      confirmPassword: "",
+      role: "candidat",
     },
     candidat: {
       // posteActuel: '',
-      niveauExperience: '',
-      formationJuridique: '',
+      niveauExperience: "",
+      formationJuridique: "",
       specialisations: [],
       langues: [],
       domainExperiences: [],
-      typeTravailRecherche: '',
+      typeTravailRecherche: "",
       villesTravailRecherche: [],
-      modeTravailRecherche: '',
-      PosteRecherche: '',
-
+      modeTravailRecherche: "",
+      PosteRecherche: "",
     },
   });
 
-
-  type UserErrors = Partial<Record<keyof FormData['user'], string>>;
-  type CandidatErrors = Partial<Record<keyof FormData['candidat'], string>>;
+  type UserErrors = Partial<Record<keyof FormData["user"], string>>;
+  type CandidatErrors = Partial<Record<keyof FormData["candidat"], string>>;
 
   const [errors, setErrors] = useState<{
     user?: UserErrors;
@@ -48,11 +45,11 @@ export default function CandidatSignUp() {
   }>({});
 
   const onFieldChange = (
-    section: 'user' | 'candidat', // indique quelle partie du formData changer
+    section: "user" | "candidat", // indique quelle partie du formData changer
     field: string,
     value: any
   ) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       [section]: {
         ...prev[section],
@@ -60,48 +57,47 @@ export default function CandidatSignUp() {
       },
     }));
 
-    setErrors(prev => ({
+    setErrors((prev) => ({
       ...prev,
       [section]: {
         ...(prev as any)[section],
-        [field]: '',
+        [field]: "",
       },
     }));
   };
 
   const handleSubmit = async () => {
-
-
     try {
-
       // console.log('Formulaire soumis avec les données :', formData);
 
       const { confirmPassword, ...user } = formData.user;
 
-    
-    // Étape 1 : préparer FormData
-    const formDataToSend = new FormData();
+      // Étape 1 : préparer FormData
+      const formDataToSend = new FormData();
 
-    // Ajouter tous les champs texte sauf "imageUrl"
-    Object.entries(user).forEach(([key, value]) => {
-      if (key !== "imageUrl" && value !== undefined && value !== null) {
-        formDataToSend.append(key, value as string);
+      // Ajouter tous les champs texte sauf "imageUrl"
+      Object.entries(user).forEach(([key, value]) => {
+        if (key !== "imageUrl" && value !== undefined && value !== null) {
+          formDataToSend.append(key, value as string);
+        }
+      });
+
+      // Ajouter le fichier sous le champ "image" attendu par Multer
+      if (user.imageUrl && user.imageUrl instanceof File) {
+        formDataToSend.append("image", user.imageUrl);
       }
-    });
 
-    // Ajouter le fichier sous le champ "image" attendu par Multer
-    if (user.imageUrl && user.imageUrl instanceof File) {
-      formDataToSend.append("image", user.imageUrl);
-    }
-
-    console.log("Données utilisateur prêtes pour l'API :", user);
+      console.log("Données utilisateur prêtes pour l'API :", user);
 
       // Étape 2 : envoyer le user à l’API
-     const userResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/register`, {
-      method: "POST",
-      body: formDataToSend,
-    });
-     if (!userResponse.ok) {
+      const userResponse = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/users/register`,
+        {
+          method: "POST",
+          body: formDataToSend,
+        }
+      );
+      if (!userResponse.ok) {
         let errorMsg = "Erreur lors de la création de l'utilisateur";
         try {
           const errorData = await userResponse.json(); //  on essaye de parser le JSON
@@ -117,7 +113,6 @@ export default function CandidatSignUp() {
         throw new Error(errorMsg); // on lance le vrai message
       }
 
-
       const createdUser = await userResponse.json();
       const userId = createdUser.userId; // dépend de ta réponse API (par ex. `createdUser.data.id`)
       console.log("Utilisateur créé avec succès :", createdUser);
@@ -128,36 +123,45 @@ export default function CandidatSignUp() {
       };
 
       // Étape 4 : envoyer le candidat à l’API
-      const candidatResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/candidats/complete-profile`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(candidatData),
-      });
-    
+      const candidatResponse = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/candidats/complete-profile`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(candidatData),
+        }
+      );
 
-  if (!candidatResponse.ok) {
-      const errorText = await candidatResponse.text();
-      console.error("Erreur backend candidat :", errorText);
-      throw new Error(errorText || "Erreur lors de la création du candidat");
+      if (!candidatResponse.ok) {
+        const errorText = await candidatResponse.text();
+        console.error("Erreur backend candidat :", errorText);
+        throw new Error(errorText || "Erreur lors de la création du candidat");
+      }
+
+      console.log("Candidat créé avec succès !");
+    } catch (error) {
+      console.error("Erreur lors de l’envoi du formulaire :", error);
+      throw error; // relance l'erreur vers FormConfirmation
     }
-
-    console.log("Candidat créé avec succès !");
-  } catch (error) {
-    console.error("Erreur lors de l’envoi du formulaire :", error);
-    throw error; // relance l'erreur vers FormConfirmation
-  }
-};
+  };
 
   // ✅ Validation selon l’étape
   const handleNextStepValidation = (step: number): boolean => {
     let requiredFields: string[] = [];
     const newErrors: Record<string, string> = {};
     let valid = true;
-    let section: 'user' | 'candidat';
+    let section: "user" | "candidat";
 
     if (step === 1) {
-      requiredFields = ["nom", "prenom", "email", "telephone", "password", "confirmPassword"];
-      section = 'user';
+      requiredFields = [
+        "nom",
+        "prenom",
+        "email",
+        "telephone",
+        "password",
+        "confirmPassword",
+      ];
+      section = "user";
 
       if (formData.user.password && formData.user.confirmPassword) {
         if (formData.user.password !== formData.user.confirmPassword) {
@@ -171,7 +175,13 @@ export default function CandidatSignUp() {
           const hasNumber = /[0-9]/.test(password);
           const hasSymbol = /[^A-Za-z0-9]/.test(password);
 
-          if (!hasMinLength || !hasUppercase || !hasLowercase || !hasNumber || !hasSymbol) {
+          if (
+            !hasMinLength ||
+            !hasUppercase ||
+            !hasLowercase ||
+            !hasNumber ||
+            !hasSymbol
+          ) {
             newErrors.password =
               "Le mot de passe doit contenir au moins 8 caractères, majuscules, minuscules, chiffres et symboles";
             valid = false;
@@ -179,8 +189,13 @@ export default function CandidatSignUp() {
         }
       }
     } else if (step === 2) {
-      requiredFields = ["niveauExperience", "formationJuridique", "specialisations", "langues"];
-      section = 'candidat';
+      requiredFields = [
+        "niveauExperience",
+        "formationJuridique",
+        "specialisations",
+        "langues",
+      ];
+      section = "candidat";
 
       // const atLeastOneCheckboxChecked =
       //   formData.candidat.typeTravailRecherche ||
@@ -197,7 +212,9 @@ export default function CandidatSignUp() {
 
     // ✅ Validation générique
     requiredFields.forEach((field) => {
-      const value = (formData[section] as any)[field as keyof (typeof formData)[typeof section]];
+      const value = (formData[section] as any)[
+        field as keyof (typeof formData)[typeof section]
+      ];
       // ⬆ mais TypeScript n’aime pas trop ça, donc mieux de faire :
       // const value = (formData[section] as Record<string, any>)[field];
 
@@ -212,7 +229,7 @@ export default function CandidatSignUp() {
       }
     });
 
-    setErrors(prev => ({
+    setErrors((prev) => ({
       ...prev,
       [section]: {
         ...((prev as any)[section] || {}),
@@ -229,9 +246,11 @@ export default function CandidatSignUp() {
         return (
           <form className="space-y-4">
             <CommunFileds
-              formData={formData.user}          // ✅ on passe seulement la partie "user"
-              onFieldChange={(field, value) => onFieldChange('user', field, value)}
-              errors={errors.user || {}}        // ✅ uniquement les erreurs de user
+              formData={formData.user} // ✅ on passe seulement la partie "user"
+              onFieldChange={(field, value) =>
+                onFieldChange("user", field, value)
+              }
+              errors={errors.user || {}} // ✅ uniquement les erreurs de user
             />
           </form>
         );
@@ -240,20 +259,17 @@ export default function CandidatSignUp() {
         return (
           <form className="space-y-4">
             <FormCandidat
-              formData={formData.candidat as any}       // ✅ on passe seulement la partie "candidat"
-              onFieldChange={(field, value) => onFieldChange('candidat', field, value)}
-              errors={errors.candidat || {}}     // ✅ uniquement les erreurs de candidat
+              formData={formData.candidat as any} // ✅ on passe seulement la partie "candidat"
+              onFieldChange={(field, value) =>
+                onFieldChange("candidat", field, value)
+              }
+              errors={errors.candidat || {}} // ✅ uniquement les erreurs de candidat
             />
           </form>
         );
 
       case 3:
-        return (
-          <FormConfirmation
-            formData={formData}
-            onSubmit={handleSubmit}
-          />
-        );
+        return <FormConfirmation formData={formData} onSubmit={handleSubmit} />;
 
       default:
         return null;
@@ -287,14 +303,15 @@ export default function CandidatSignUp() {
                 </h1>
 
                 <p className="text-muted-foreground">
-                  Un processus simple, une présentation professionnelle et des correspondances intelligentes.
+                  Un processus simple, une présentation professionnelle et des
+                  correspondances intelligentes.
                 </p>
 
                 <ul className="mt-4 space-y-3">
                   {[
-                    'Profil clair et structuré',
-                    'Mise en avant de vos spécialités',
-                    'Matching avec les meilleures opportunités',
+                    "Profil clair et structuré",
+                    "Mise en avant de vos spécialités",
+                    "Matching avec les meilleures opportunités",
                   ].map((text) => (
                     <li key={text} className="flex items-start gap-3">
                       <span className="mt-0.5 inline-flex h-5 w-5 items-center justify-center rounded-full bg-primary text-primary-foreground">
@@ -310,13 +327,17 @@ export default function CandidatSignUp() {
                     <div className="flex items-center gap-2 font-medium text-foreground">
                       <Icon name="Shield" size={18} /> Sécurisé
                     </div>
-                    <p className="mt-1 text-xs">Vos données restent privées et protégées.</p>
+                    <p className="mt-1 text-xs">
+                      Vos données restent privées et protégées.
+                    </p>
                   </div>
                   <div className="rounded-lg border border-border bg-card p-3">
                     <div className="flex items-center gap-2 font-medium text-foreground">
                       <Icon name="Clock" size={18} /> Rapide
                     </div>
-                    <p className="mt-1 text-xs">Inscription en moins de 3 minutes.</p>
+                    <p className="mt-1 text-xs">
+                      Inscription en moins de 3 minutes.
+                    </p>
                   </div>
                 </div>
               </div>
@@ -331,7 +352,11 @@ export default function CandidatSignUp() {
 
                 <p className="mt-6 text-center text-sm text-muted-foreground">
                   Déjà un compte ?
-                  <a href="/login" className="ml-1 font-medium underline-offset-4 hover:underline">Se connecter</a>
+                  <a
+                    href="/login"
+                    className="ml-1 font-medium underline-offset-4 hover:underline">
+                    Se connecter
+                  </a>
                 </p>
               </div>
             </section>
@@ -340,5 +365,4 @@ export default function CandidatSignUp() {
       </main>
     </div>
   );
-
 }
