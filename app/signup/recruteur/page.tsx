@@ -243,10 +243,10 @@ export default function RecruteurSignUp() {
 
       <main className="relative">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10 lg:py-16">
-          <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-start">
+          <div className="grid lg:grid-cols-3 gap-10 lg:gap-16">
             {/* Left: Brand/Value proposition */}
-            <section className="order-2 lg:order-1">
-              <div className="sticky top-6 space-y-6">
+            <aside className="hidden lg:block lg:col-span-1">
+              <div className="sticky top-26">
                 <span className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1 text-sm text-muted-foreground">
                   <Icon name="Building2" size={18} />
                   Inscription recruteur
@@ -290,10 +290,10 @@ export default function RecruteurSignUp() {
                   </div>
                 </div>
               </div>
-            </section>
+            </aside>
 
             {/* Right: Form wizard */}
-            <section className="order-1 lg:order-2">
+            <section className="order-1 lg:order-2 lg:col-span-2">
               <div className="mx-auto w-full max-w-2xl rounded-2xl border border-border bg-card/80 backdrop-blur p-4 sm:p-6 shadow-lg">
                 <NavigatorForm onNextStep={handleNextStepValidation}>
                   {renderStep}

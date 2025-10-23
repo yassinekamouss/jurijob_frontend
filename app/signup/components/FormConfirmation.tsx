@@ -64,33 +64,43 @@ const FormConfirmation: React.FC<FormConfirmationProps> = ({ formData, onSubmit 
       {/* ✅ Infos de l’utilisateur */}
       <div className="border rounded-lg p-4 shadow-sm bg-white">
         <h3 className="font-semibold text-lg mb-3 border-b pb-1">Infos de votre compte</h3>
-        <ul className="space-y-1">
-          {Object.keys(formData.user).map((field) => {
-            const value = (formData.user as any)[field];
 
-            if (field === "imageUrl") {
-              if (!value) return null;
+        {/* 🖼️ Afficher l'image en premier */}
+        {formData.user.imageUrl && (
+          <div className="flex flex-col items-center mb-4">
+            <img
+              src={
+                formData.user.imageUrl instanceof File
+                  ? URL.createObjectURL(formData.user.imageUrl)
+                  : formData.user.imageUrl
+              }
+              alt="Photo de profil"
+              className="w-28 h-28 object-cover rounded-full border-2 border-gray-300 shadow-sm"
+            />
+            <span className="mt-2 text-sm text-gray-600 font-medium">
+              Photo de profil
+            </span>
+          </div>
+        )}
+
+        {/* 🧾 Autres informations */}
+        <ul className="space-y-1">
+          {Object.keys(formData.user)
+            .filter((field) => field !== "imageUrl") // ⬅️ on exclut imageUrl
+            .map((field) => {
+              const value = (formData.user as any)[field];
               return (
-                <li key={field} className="flex flex-col items-center gap-2">
-                  <span className="font-medium capitalize">Photo de profil</span>
-                  <img
-                    src={value instanceof File ? URL.createObjectURL(value) : value}
-                    alt="Aperçu de l'image"
-                    className="w-24 h-24 object-cover rounded-full border"
-                  />
+                <li key={field} className="flex justify-between">
+                  <span className="font-medium capitalize">
+                    {field.replace(/([A-Z])/g, " $1")}
+                  </span>
+                  <span>{value || "-"}</span>
                 </li>
               );
-            }
-
-            return (
-              <li key={field} className="flex justify-between">
-                <span className="font-medium capitalize">{field.replace(/([A-Z])/g, " $1")}</span>
-                <span>{value || "-"}</span>
-              </li>
-            );
-          })}
+            })}
         </ul>
       </div>
+
 
       {/* ✅ Bouton Soumettre */}
       <div className="text-center">
