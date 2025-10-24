@@ -1,10 +1,9 @@
-import React, { useState } from 'react';
-import Icon from './FormularIcons';
-import { User } from '@/app/types/DataFormDataRegister';
+import React, { useRef, useState } from "react";
+import Icon from "./FormularIcons";
+import { User } from "@/app/types/DataFormDataRegister";
 // import { Candidat } from '@/app/types/candidatFormDataRegister';
 
 interface CommonFieldsProps {
-
   formData: User;
 
   onFieldChange: (field: keyof User, value: any) => void;
@@ -16,17 +15,22 @@ const CommonFields: React.FC<CommonFieldsProps> = ({
   formData,
   onFieldChange,
   errors = {},
-  className = '',
+  className = "",
 }) => {
   const [showPassword, setShowPassword] = useState<boolean>(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState<boolean>(false);
+  const [showConfirmPassword, setShowConfirmPassword] =
+    useState<boolean>(false);
+  const [dragActive, setDragActive] = useState<boolean>(false);
+  const [localImgError, setLocalImgError] = useState<string | null>(null);
+  const inputRef = useRef<HTMLInputElement | null>(null);
 
   const handleChange = (field: string, value: string) => {
     onFieldChange(field as any, value);
   };
 
   const getPasswordStrength = (password: string) => {
-    if (!password) return { strength: 0, label: '', color: '', bg: 'bg-gray-300' };
+    if (!password)
+      return { strength: 0, label: "", color: "", bg: "bg-gray-300" };
 
     let strength = 0;
     if (password.length >= 8) strength++;
@@ -36,18 +40,90 @@ const CommonFields: React.FC<CommonFieldsProps> = ({
     if (/[^A-Za-z0-9]/.test(password)) strength++;
 
     const levels = [
-      { strength: 0, label: '', color: '', bg: 'bg-gray-300' },
-      { strength: 1, label: 'Très faible', color: 'text-red-600', bg: 'bg-red-500' },
-      { strength: 2, label: 'Faible', color: 'text-orange-500', bg: 'bg-orange-400' },
-      { strength: 3, label: 'Moyen', color: 'text-yellow-500', bg: 'bg-yellow-400' },
-      { strength: 4, label: 'Fort', color: 'text-green-600', bg: 'bg-green-500' },
-      { strength: 5, label: 'Très fort', color: 'text-green-700', bg: 'bg-green-600' },
+      { strength: 0, label: "", color: "", bg: "bg-gray-300" },
+      {
+        strength: 1,
+        label: "Très faible",
+        color: "text-red-600",
+        bg: "bg-red-500",
+      },
+      {
+        strength: 2,
+        label: "Faible",
+        color: "text-orange-500",
+        bg: "bg-orange-400",
+      },
+      {
+        strength: 3,
+        label: "Moyen",
+        color: "text-yellow-500",
+        bg: "bg-yellow-400",
+      },
+      {
+        strength: 4,
+        label: "Fort",
+        color: "text-green-600",
+        bg: "bg-green-500",
+      },
+      {
+        strength: 5,
+        label: "Très fort",
+        color: "text-green-700",
+        bg: "bg-green-600",
+      },
     ];
 
     return levels[strength];
   };
 
-  const passwordStrength = getPasswordStrength(formData.password || '');
+  const passwordStrength = getPasswordStrength(formData.password || "");
+
+  const formatBytes = (bytes: number) => {
+    if (!bytes) return "0 B";
+    const sizes = ["B", "KB", "MB", "GB"];
+    const i = Math.floor(Math.log(bytes) / Math.log(1024));
+    return `${(bytes / Math.pow(1024, i)).toFixed(1)} ${sizes[i]} }`;
+  };
+
+  const validateAndSetImage = (file: File | undefined | null) => {
+    if (!file) {
+      onFieldChange("imageUrl", "");
+      setLocalImgError(null);
+      return;
+    }
+    const allowed = ["image/jpeg", "image/png", "image/webp"];
+    const maxBytes = 3 * 1024 * 1024; // 3MB
+    if (!allowed.includes(file.type)) {
+      setLocalImgError("Formats acceptés: JPG, PNG, WebP");
+      return;
+    }
+    if (file.size > maxBytes) {
+      setLocalImgError("La taille maximale est 3 MB");
+      return;
+    }
+    setLocalImgError(null);
+    onFieldChange("imageUrl", file);
+  };
+
+  const onDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
+    const file = e.dataTransfer.files?.[0];
+    validateAndSetImage(file);
+  };
+
+  const onDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(true);
+  };
+
+  const onDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
+  };
 
   return (
     <div className={`space-y-6 ${className}`}>
@@ -61,56 +137,108 @@ const CommonFields: React.FC<CommonFieldsProps> = ({
         </p>
       </div>
 
+      {/* --- IMAGE DE PROFIL (amélioré) --- */}
+      <div className="flex flex-col">
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          Photo de profil
+        </label>
 
-      {/* --- IMAGE DE PROFIL --- */}
-<div className="flex flex-col items-center">
-  <label className="block text-sm font-medium text-gray-700 mb-2">
-    Photo de profil
-  </label>
+        <div
+          onDrop={onDrop}
+          onDragOver={onDragOver}
+          onDragLeave={onDragLeave}
+          className={`relative w-full rounded-xl border-2 transition-all ${
+            dragActive
+              ? "border-primary bg-primary/5"
+              : "border-dashed border-border bg-input-background"
+          }`}>
+          <div className="flex items-center gap-4 p-4">
+            {/* Aperçu */}
+            <div className="h-16 w-16 rounded-full overflow-hidden border border-border bg-muted flex items-center justify-center">
+              {formData.imageUrl ? (
+                <img
+                  src={
+                    typeof formData.imageUrl === "string"
+                      ? formData.imageUrl
+                      : URL.createObjectURL(formData.imageUrl)
+                  }
+                  alt="Aperçu du profil"
+                  className="h-full w-full object-cover"
+                />
+              ) : (
+                <Icon
+                  name="UserRound"
+                  size={28}
+                  className="text-muted-foreground"
+                />
+              )}
+            </div>
 
-      {/* Aperçu de l'image */}
-      {formData.imageUrl && (
-        <img
-          src={
-            typeof formData.imageUrl === "string"
-              ? formData.imageUrl // si c’est déjà une URL (Cloudinary)
-              : URL.createObjectURL(formData.imageUrl) // si c’est un fichier local
-          }
-          alt="Aperçu du profil"
-          className="w-24 h-24 rounded-full object-cover mb-3 shadow-md"
-        />
-      )}
+            {/* Texte et actions */}
+            <div className="flex-1 min-w-0">
+              <p className="text-sm text-foreground font-medium">
+                Glissez-déposez une image ici
+              </p>
+              <p className="text-xs text-muted-foreground">
+                PNG, JPG, WebP – max 3MB
+              </p>
+              {formData.imageUrl instanceof File && (
+                <p className="mt-1 text-xs text-muted-foreground truncate">
+                  {(formData.imageUrl as File).name} ·{" "}
+                  {formatBytes((formData.imageUrl as File).size)}
+                </p>
+              )}
+            </div>
 
-      <input
-        type="file"
-        accept="image/*"
-        onChange={(e) => {
-          const file = e.target.files?.[0];
-          if (file) {
-            onFieldChange("imageUrl", file);
-          }
-        }}
-        className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4
-          file:rounded-md file:border-0 file:text-sm file:font-semibold
-          file:bg-black file:text-white hover:file:bg-gray-800"
-      />
-      {errors.imageUrl && (
-        <p className="text-xs text-red-500 mt-1">{errors.imageUrl}</p>
-      )}
-    </div>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => inputRef.current?.click()}
+                className="inline-flex items-center gap-2 rounded-lg bg-primary text-primary-foreground px-3 py-2 text-sm hover:opacity-90 transition">
+                <Icon name="Camera" size={18} />
+                Choisir une photo
+              </button>
+              {formData.imageUrl && (
+                <button
+                  type="button"
+                  onClick={() => validateAndSetImage(null)}
+                  className="inline-flex items-center gap-2 rounded-lg bg-muted text-foreground px-3 py-2 text-sm hover:opacity-90 transition">
+                  <Icon name="Trash2" size={18} />
+                  Supprimer
+                </button>
+              )}
+            </div>
+          </div>
 
+          {/* Input caché */}
+          <input
+            ref={inputRef}
+            type="file"
+            accept="image/png,image/jpeg,image/webp"
+            onChange={(e) => validateAndSetImage(e.target.files?.[0])}
+            className="hidden"
+          />
+        </div>
 
+        {(errors.imageUrl || localImgError) && (
+          <p className="text-xs text-red-500 mt-2">
+            {localImgError || errors.imageUrl}
+          </p>
+        )}
+      </div>
 
       {/* --- NOM / PRENOM --- */}
       <div className="grid gap-6 md:grid-cols-2">
         {/* Prénom */}
         <div>
-          <label className="block text-sm font-medium text-gray-700">Prénom</label>
+          <label className="block text-sm font-medium text-gray-700">
+            Prénom
+          </label>
           <input
             type="text"
             placeholder="Votre prénom"
-            value={formData.prenom || ''}
-            onChange={(e) => handleChange('prenom', e.target.value)}
+            value={formData.prenom || ""}
+            onChange={(e) => handleChange("prenom", e.target.value)}
             className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:outline-none"
             required
           />
@@ -125,8 +253,8 @@ const CommonFields: React.FC<CommonFieldsProps> = ({
           <input
             type="text"
             placeholder="Votre nom"
-            value={formData.nom || ''}
-            onChange={(e) => handleChange('nom', e.target.value)}
+            value={formData.nom || ""}
+            onChange={(e) => handleChange("nom", e.target.value)}
             className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:outline-none"
             required
           />
@@ -138,52 +266,61 @@ const CommonFields: React.FC<CommonFieldsProps> = ({
 
       {/* --- EMAIL --- */}
       <div>
-        <label className="block text-sm font-medium text-gray-700">Adresse e-mail</label>
+        <label className="block text-sm font-medium text-gray-700">
+          Adresse e-mail
+        </label>
         <input
           type="email"
           placeholder="votre.email@exemple.com"
-          value={formData.email || ''}
-          onChange={(e) => handleChange('email', e.target.value)}
+          value={formData.email || ""}
+          onChange={(e) => handleChange("email", e.target.value)}
           className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:outline-none"
           required
         />
         <p className="text-xs text-gray-500 mt-1">
           Utilisée pour la connexion et les notifications importantes
         </p>
-        {errors.email && <p className="text-xs text-red-500 mt-1">{errors.email}</p>}
+        {errors.email && (
+          <p className="text-xs text-red-500 mt-1">{errors.email}</p>
+        )}
       </div>
 
       {/* --- TELEPHONE --- */}
       <div>
-        <label className="block text-sm font-medium text-gray-700">Numéro de téléphone</label>
+        <label className="block text-sm font-medium text-gray-700">
+          Numéro de téléphone
+        </label>
         <input
           type="tel"
           placeholder="+33 1 23 45 67 89"
-          value={formData.telephone || ''}
-          onChange={(e) => handleChange('telephone', e.target.value)}
+          value={formData.telephone || ""}
+          onChange={(e) => handleChange("telephone", e.target.value)}
           className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:outline-none"
           required
         />
-        {errors.telephone && <p className="text-xs text-red-500 mt-1">{errors.telephone}</p>}
+        {errors.telephone && (
+          <p className="text-xs text-red-500 mt-1">{errors.telephone}</p>
+        )}
       </div>
 
       {/* --- MOT DE PASSE --- */}
       <div className="relative">
-        <label className="block text-sm font-medium text-gray-700">Mot de passe</label>
+        <label className="block text-sm font-medium text-gray-700">
+          Mot de passe
+        </label>
         <input
-          type={showPassword ? 'text' : 'password'}
+          type={showPassword ? "text" : "password"}
           placeholder="Créez un mot de passe sécurisé"
-          value={formData.password || ''}
-          onChange={(e) => handleChange('password', e.target.value)}
+          value={formData.password || ""}
+          onChange={(e) => handleChange("password", e.target.value)}
           className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:outline-none"
           required
         />
         <button
           type="button"
           onClick={() => setShowPassword(!showPassword)}
-          className="absolute right-3 top-9 text-gray-500 hover:text-gray-800"
-        >
-          <Icon name={showPassword ? 'EyeOff' : 'Eye'} size={20} />
+          className="absolute right-3 top-9 text-gray-500 hover:text-gray-800">
+          <Icon name={showPassword ? "EyeOff" : "Eye"} size={20} />
         </button>
 
         {/* Barre de force du mot de passe */}
@@ -201,7 +338,8 @@ const CommonFields: React.FC<CommonFieldsProps> = ({
               </span>
             </div>
             <p className="text-xs text-gray-500 mt-1">
-              Utilisez au moins 8 caractères avec majuscules, minuscules, chiffres et symboles
+              Utilisez au moins 8 caractères avec majuscules, minuscules,
+              chiffres et symboles
             </p>
           </div>
         )}
@@ -209,27 +347,31 @@ const CommonFields: React.FC<CommonFieldsProps> = ({
 
       {/* --- CONFIRMATION MOT DE PASSE --- */}
       <div className="relative">
-        <label className="block text-sm font-medium text-gray-700">Confirmer le mot de passe</label>
+        <label className="block text-sm font-medium text-gray-700">
+          Confirmer le mot de passe
+        </label>
         <input
-          type={showConfirmPassword ? 'text' : 'password'}
+          type={showConfirmPassword ? "text" : "password"}
           placeholder="Confirmez votre mot de passe"
-          value={formData.confirmPassword || ''}
-          onChange={(e) => handleChange('confirmPassword', e.target.value)}
+          value={formData.confirmPassword || ""}
+          onChange={(e) => handleChange("confirmPassword", e.target.value)}
           className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:outline-none"
           required
         />
         <button
           type="button"
           onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-          className="absolute right-3 top-9 text-gray-500 hover:text-gray-800"
-        >
-          <Icon name={showConfirmPassword ? 'EyeOff' : 'Eye'} size={20} />
+          className="absolute right-3 top-9 text-gray-500 hover:text-gray-800">
+          <Icon name={showConfirmPassword ? "EyeOff" : "Eye"} size={20} />
         </button>
       </div>
 
-      {formData.confirmPassword && formData.confirmPassword !== formData.password && (
-        <p className="text-xs text-red-500 mt-1">Les mots de passe ne correspondent pas</p>
-      )}
+      {formData.confirmPassword &&
+        formData.confirmPassword !== formData.password && (
+          <p className="text-xs text-red-500 mt-1">
+            Les mots de passe ne correspondent pas
+          </p>
+        )}
     </div>
   );
 };

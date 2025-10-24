@@ -57,10 +57,10 @@ export default function Header() {
   };
 
   return (
-    <Reveal direction="down" duration={0.8}>
+    <Reveal direction="down" duration={0.8} className="sticky top-0 z-50">
       <header
         id="site-header"
-        className="relative z-50 bg-white/80 backdrop-blur-md border-b border-gray-100 sticky top-0">
+        className="relative z-50 bg-white/80 backdrop-blur-md border-b border-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-20">
             {/* Logo / Brand */}
@@ -104,27 +104,28 @@ export default function Header() {
                 <div className="relative">
                   <button
                     onClick={() => setShowMenu(!showMenu)}
-                    className="bg-black text-white hover:bg-gray-800 rounded-lg px-6 py-2 transition flex items-center gap-2"
-                  >
+                    className="bg-black text-white hover:bg-gray-800 rounded-lg px-6 py-2 transition flex items-center gap-2">
                     Inscription
-                    <ChevronDown className={`w-4 h-4 transition-transform ${showMenu ? 'rotate-180' : ''}`} />
+                    <ChevronDown
+                      className={`w-4 h-4 transition-transform ${
+                        showMenu ? "rotate-180" : ""
+                      }`}
+                    />
                   </button>
-                  
+
                   {showMenu && (
                     <div className="absolute right-0 mt-2 w-52 bg-white border border-black/10 rounded-md shadow-lg py-2">
                       <Link
                         href="/signup/recruteur"
                         className="flex items-center gap-2 px-4 py-2 text-sm text-black hover:bg-black/5 w-full text-left"
-                        onClick={() => console.log("Recruteur")}
-                      >
+                        onClick={() => console.log("Recruteur")}>
                         <Building2 className="w-4 h-4" />
                         En tant que Recruteur
                       </Link>
                       <Link
                         href="/signup/candidat"
                         className="flex items-center gap-2 px-4 py-2 text-sm text-black hover:bg-black/5 w-full text-left"
-                        onClick={() => console.log("Diplômé")}
-                      >
+                        onClick={() => console.log("Diplômé")}>
                         <GraduationCap className="w-4 h-4" />
                         En tant que Diplômé
                       </Link>

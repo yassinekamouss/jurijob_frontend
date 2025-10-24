@@ -48,58 +48,58 @@ export default function Dashboard() {
     }
   };
 
-const handleSavePersonalInfo = async (data: PersonalInfo) => {
-  if (!profileData) return;
-  try {
-    // Si on a un fichier File/Blob, on utilise FormData
-    if (data.imageUrl && typeof data.imageUrl !== 'string') {
-      const formData = new FormData();
-      formData.append("nom", data.nom);
-      formData.append("prenom", data.prenom);
-      formData.append("email", data.email);
-      formData.append("isActive", data.isActive ? "true" : "false");
-      formData.append("isArchived", data.isArchived ? "true" : "false");
-      formData.append("image", data.imageUrl);
+  const handleSavePersonalInfo = async (data: PersonalInfo) => {
+    if (!profileData) return;
+    try {
+      // Si on a un fichier File/Blob, on utilise FormData
+      if (data.imageUrl && typeof data.imageUrl !== "string") {
+        const formData = new FormData();
+        formData.append("nom", data.nom);
+        formData.append("prenom", data.prenom);
+        formData.append("email", data.email);
+        formData.append("isActive", data.isActive ? "true" : "false");
+        formData.append("isArchived", data.isArchived ? "true" : "false");
+        formData.append("image", data.imageUrl);
 
-      const res = await fetchWithAuth("/users/update-user", {
-        method: "PATCH",
-        body: formData,
-      });
+        const res = await fetchWithAuth("/users/update-user", {
+          method: "PATCH",
+          body: formData,
+        });
 
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
-        console.error("Update user failed", err);
-        return;
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({}));
+          console.error("Update user failed", err);
+          return;
+        }
+      } else {
+        // Sinon, envoyer du JSON classique
+        const payload = {
+          nom: data.nom,
+          prenom: data.prenom,
+          email: data.email,
+          isActive: data.isActive,
+          isArchived: data.isArchived,
+        };
+
+        const res = await fetchWithAuth("/users/update-user", {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({}));
+          console.error("Update user failed", err);
+          return;
+        }
       }
-    } else {
-      // Sinon, envoyer du JSON classique
-      const payload = {
-        nom: data.nom,
-        prenom: data.prenom,
-        email: data.email,
-        isActive: data.isActive,
-        isArchived: data.isArchived,
-      };
 
-      const res = await fetchWithAuth("/users/update-user", {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
-        console.error("Update user failed", err);
-        return;
-      }
+      await refreshProfile();
+      console.log("Notification: Informations personnelles mises à jour");
+    } catch (e) {
+      console.error("Erreur MAJ infos personnelles", e);
     }
-
-    await refreshProfile();
-    console.log("Notification: Informations personnelles mises à jour");
-  } catch (e) {
-    console.error("Erreur MAJ infos personnelles", e);
-  }
-};
+  };
 
   const handleSaveProfessionalInfo = async (data: ProfessionalInfo) => {
     if (!profileData) return;
@@ -298,8 +298,6 @@ const handleSavePersonalInfo = async (data: PersonalInfo) => {
           </aside>
         </div>
       </main>
-
-      {JSON.stringify(profileData, null, 2) /* DEBUG ONLY */}
     </div>
   );
 }

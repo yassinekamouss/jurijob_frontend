@@ -1,11 +1,11 @@
 'use client';
 import NavigatorForm from '@/app/signup/components/FormNavigator';
 import CommunFileds from '@/app/signup/components/FormCommunFileds';
-
 import FormRecruteur from '@/app/signup/components/FormRecuiter';
-import {User} from'@/app/types/DataFormDataRegister'
+import Header from '@/app/components/Header';
+import Icon from '@/app/signup/components/FormularIcons';
 
-import { useState } from "react";
+import { useState } from 'react';
 import FormConfirmation from '../components/FormConfirmation';
 import type FormData from '@/app/types/DataFormDataRegister';
 // import recruteur from '@/app/types/recruteur';
@@ -230,5 +230,84 @@ export default function RecruteurSignUp() {
     }
   };
 
-  return <NavigatorForm onNextStep={handleNextStepValidation}>{renderStep}</NavigatorForm>;
+  return (
+    <div className="min-h-screen bg-background">
+      <Header />
+
+      {/* Decorative background accents */}
+      <div className="pointer-events-none absolute inset-0 -z-10">
+        <div className="absolute -top-28 -left-28 h-72 w-72 rounded-full bg-primary/10 blur-3xl" />
+        <div className="absolute top-1/3 -right-24 h-72 w-72 rounded-full bg-secondary/20 blur-3xl" />
+        <div className="absolute -bottom-28 left-1/3 h-72 w-72 rounded-full bg-muted/60 blur-3xl" />
+      </div>
+
+      <main className="relative">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10 lg:py-16">
+          <div className="grid lg:grid-cols-3 gap-10 lg:gap-16">
+            {/* Left: Brand/Value proposition */}
+            <aside className="hidden lg:block lg:col-span-1">
+              <div className="sticky top-26">
+                <span className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1 text-sm text-muted-foreground">
+                  <Icon name="Building2" size={18} />
+                  Inscription recruteur
+                </span>
+
+                <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight">
+                  Attirez les meilleurs talents juridiques
+                </h1>
+
+                <p className="text-muted-foreground">
+                  Créez un compte recruteur et publiez vos besoins, nous facilitons le matching.
+                </p>
+
+                <ul className="mt-4 space-y-3">
+                  {[
+                    'Profil entreprise crédible et soigné',
+                    'Ciblage par spécialités et niveaux',
+                    'Gain de temps grâce au filtrage intelligent',
+                  ].map((text) => (
+                    <li key={text} className="flex items-start gap-3">
+                      <span className="mt-0.5 inline-flex h-5 w-5 items-center justify-center rounded-full bg-primary text-primary-foreground">
+                        <Icon name="Check" size={14} />
+                      </span>
+                      <span className="text-sm sm:text-base">{text}</span>
+                    </li>
+                  ))}
+                </ul>
+
+                <div className="mt-6 grid grid-cols-2 gap-3 text-sm text-muted-foreground">
+                  <div className="rounded-lg border border-border bg-card p-3">
+                    <div className="flex items-center gap-2 font-medium text-foreground">
+                      <Icon name="Shield" size={18} /> Sécurisé
+                    </div>
+                    <p className="mt-1 text-xs">Vos données d’entreprise sont protégées.</p>
+                  </div>
+                  <div className="rounded-lg border border-border bg-card p-3">
+                    <div className="flex items-center gap-2 font-medium text-foreground">
+                      <Icon name="Sparkles" size={18} /> Efficace
+                    </div>
+                    <p className="mt-1 text-xs">Publiez et trouvez rapidement les bons profils.</p>
+                  </div>
+                </div>
+              </div>
+            </aside>
+
+            {/* Right: Form wizard */}
+            <section className="order-1 lg:order-2 lg:col-span-2">
+              <div className="mx-auto w-full max-w-2xl rounded-2xl border border-border bg-card/80 backdrop-blur p-4 sm:p-6 shadow-lg">
+                <NavigatorForm onNextStep={handleNextStepValidation}>
+                  {renderStep}
+                </NavigatorForm>
+
+                <p className="mt-6 text-center text-sm text-muted-foreground">
+                  Déjà un compte ?
+                  <a href="/login" className="ml-1 font-medium underline-offset-4 hover:underline">Se connecter</a>
+                </p>
+              </div>
+            </section>
+          </div>
+        </div>
+      </main>
+    </div>
+  );
 }
