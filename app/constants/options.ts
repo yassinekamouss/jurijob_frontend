@@ -20,6 +20,14 @@ export const niveauxExperience = [
   "Senior (8-15 ans)",
   "Expert (15+ ans)",
 ];
+export const niveauxLangue = [
+  "Débutant",
+  "Intermédiaire",
+  "Avancé",
+  "Courant",
+  "Bilingue",
+  "Langue maternelle",
+];
 
 //  formations juridiques
 export const formationsJuridiques = [
