@@ -25,6 +25,7 @@ export interface Candidat {
 }
 
 export interface Recruteur {
+  userId?: string;
   nomEntreprise: string;//ok
   poste: string;
   typeOrganisation: string;//ok

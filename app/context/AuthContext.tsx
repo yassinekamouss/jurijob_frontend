@@ -14,6 +14,7 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<User | null>;
   logout: () => Promise<void>;
   fetchWithAuth: (url: string, options?: RequestInit) => Promise<Response>;
+  
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);

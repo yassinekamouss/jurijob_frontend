@@ -4,13 +4,14 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { useAuth } from "@/app/context/AuthContext";
 import type Demande from "@/app/types/Demande";
+import Icon from "../../../../signup/components/FormularIcons";
 
 import Step1Infos from "./Step1Infos";
 import Step2Details from "./Step2Details";
 import Step3Langues from "./Step3Langues";
 import Step4Confirmation from "./Step4Confirmation";
 
-type FormData = Omit<Demande, "_id" | "statut"  | "createdAt" | "updatedAt">;
+type FormData = Omit<Demande, "_id" | "statut" | "createdAt" | "updatedAt">;
 
 interface MultiStepFormDemandeProps {
   onSuccess: () => void;
@@ -103,18 +104,36 @@ const MultiStepFormDemande: React.FC<MultiStepFormDemandeProps> = ({ onSuccess }
   };
 
   const steps = [
-    <Step1Infos key="1" data={formData} onNext={handleNext} />,
-    <Step2Details key="2" data={formData} onNext={handleNext} onPrev={handlePrev} />,
-    <Step3Langues key="3" data={formData} onNext={handleNext} onPrev={handlePrev} />,
-    <Step4Confirmation 
-      key="4" 
-      data={formData} 
-      onPrev={handlePrev} 
-      onSubmit={handleSubmit} 
-      loading={loading}
-      error={error}
-    />,
+    { id: 1, label: "Informations", icon: "FileText" },
+    { id: 2, label: "Détails", icon: "Settings" },
+    { id: 3, label: "Langues", icon: "Globe" },
+    { id: 4, label: "Confirmation", icon: "ClipboardCheck" },
   ];
+
+  const totalSteps = steps.length;
+
+  const getStepStatus = (id: number) => {
+    if (id < step) return "completed";
+    if (id === step) return "current";
+    return "upcoming";
+  };
+
+  const getStepClasses = (status: string) => {
+    switch (status) {
+      case 'completed':
+        return 'bg-success text-success-foreground border-success';
+      case 'current':
+        return 'bg-primary text-primary-foreground border-primary';
+      case 'upcoming':
+        return 'bg-muted text-text-secondary border-border';
+      default:
+        return 'bg-muted text-text-secondary border-border';
+    }
+  };
+
+  const getConnectorClasses = (id: number) => {
+    return id < step ? "bg-black h-1" : "bg-gray-200 h-1";
+  };
 
   return (
     <motion.div
@@ -122,42 +141,91 @@ const MultiStepFormDemande: React.FC<MultiStepFormDemandeProps> = ({ onSuccess }
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -15 }}
       transition={{ duration: 0.3 }}
-      className="border border-gray-200 rounded-2xl shadow-sm p-6 bg-white"
+      className="border border-gray-100 rounded-2xl shadow-sm p-8 bg-white max-w-3xl mx-auto"
     >
-      {/* Indicateur de progression */}
-      <div className="mb-6">
-        <div className="flex justify-between items-center mb-2">
-          {[1, 2, 3, 4].map((s) => (
-            <div key={s} className="flex items-center flex-1">
-              <div
-                className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium transition-colors ${
-                  step >= s
-                    ? "bg-black text-white"
-                    : "bg-gray-200 text-gray-500"
-                }`}
-              >
-                {s}
+      {/* Barre d'étapes stylée */}
+      <div className="w-full mb-8">
+        <div className="flex items-center justify-center">
+          {steps.map((st, index) => {
+            const status = getStepStatus(st.id);
+            const isLast = index === totalSteps - 1;
+
+            return (
+              <div key={st.id} className="flex items-center">
+                {/* Icône et label */}
+                <div className="flex flex-col items-center justify-center">
+                  <div
+                    className={`w-10 h-10 rounded-full border-2 flex items-center justify-center transition-all duration-300 ${getStepClasses(
+                      status
+                    )}`}
+                  >
+                    {status === "completed" ? (
+                      <Icon name="Check" size={22} />
+                    ) : (
+                      <Icon name={st.icon as any} size={22} />
+                    )}
+                  </div>
+                  <span
+                    className={`text-sm font-medium mt-3 text-center ${status === "current"
+                      ? "text-black"
+                      : status === "completed"
+                        ? "text-gray-600"
+                        : "text-gray-400"
+                      }`}
+                  >
+                    {st.label}
+                  </span>
+                </div>
+
+                {/* Ligne de connexion */}
+                {!isLast && (
+                  <div className="w-16 h-0.5 mx-4 transition-all duration-300 rounded-full bg-gray-300 relative">
+                    <div
+                      className={`absolute top-0 left-0 h-full transition-all duration-300 rounded-full ${getConnectorClasses(
+                        st.id
+                      )}`}
+                      style={{ width: "100%" }}
+                    />
+                  </div>
+                )}
               </div>
-              {s < 4 && (
-                <div
-                  className={`flex-1 h-1 mx-2 rounded transition-colors ${
-                    step > s ? "bg-black" : "bg-gray-200"
-                  }`}
-                />
-              )}
-            </div>
-          ))}
+            );
+          })}
         </div>
-        <div className="flex justify-between text-xs text-gray-600 mt-2">
-          <span>Informations</span>
-          <span>Détails</span>
-          <span>Langues</span>
-          <span>Confirmation</span>
+
+
+        {/* Barre de progression */}
+        <div className="mt-6">
+          <div className="flex justify-between text-sm text-gray-500 mb-1">
+            <span>Progression</span>
+            <span>{Math.round((step / totalSteps) * 100)}%</span>
+          </div>
+          <div className="w-full bg-gray-100 rounded-full h-2">
+            <div
+              className="bg-black h-2 rounded-full transition-all duration-300"
+              style={{ width: `${(step / totalSteps) * 100}%` }}
+            />
+          </div>
         </div>
       </div>
 
-      {steps[step - 1]}
-    </motion.div>
+      {/* Étape active */}
+      {
+        [
+          <Step1Infos key="1" data={formData} onNext={handleNext} />,
+          <Step2Details key="2" data={formData} onNext={handleNext} onPrev={handlePrev} />,
+          <Step3Langues key="3" data={formData} onNext={handleNext} onPrev={handlePrev} />,
+          <Step4Confirmation
+            key="4"
+            data={formData}
+            onPrev={handlePrev}
+            onSubmit={handleSubmit}
+            loading={loading}
+            error={error}
+          />,
+        ][step - 1]
+      }
+    </motion.div >
   );
 };
 

@@ -118,10 +118,10 @@ const CandidateFields: React.FC<CandidateFieldsProps> = ({
             return (
               <label
                 key={opt}
-                className={`flex items-center gap-2 border rounded-lg px-3 py-2 cursor-pointer transition-colors duration-200
-            ${isChecked
-                    ? "bg-blue-600 text-white border-blue-700 shadow-sm"
-                    : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"
+                className={`flex items-center gap-2 border rounded-lg px-3 py-2 cursor-pointer transition-all duration-200
+        ${isChecked
+                    ? "bg-gray-900 text-white border-gray-800 shadow-md"
+                    : "bg-white text-gray-800 border-gray-300 hover:bg-gray-100 hover:border-gray-400"
                   }`}
               >
                 <input
@@ -140,7 +140,7 @@ const CandidateFields: React.FC<CandidateFieldsProps> = ({
                       handleChange("specialisations", [...current, opt]);
                     }
                   }}
-                  className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-2 focus:ring-blue-500 cursor-pointer"
+                  className="w-4 h-4 text-black bg-white border-gray-400 rounded focus:ring-2 focus:ring-gray-600 cursor-pointer"
                 />
                 <span className="text-sm font-medium">{opt}</span>
               </label>
@@ -161,7 +161,7 @@ const CandidateFields: React.FC<CandidateFieldsProps> = ({
             {formData.specialisations.map((item) => (
               <div
                 key={item}
-                className="flex items-center bg-blue-50 border border-blue-200 text-blue-700 rounded-full px-3 py-1 text-sm font-medium shadow-sm"
+                className="flex items-center bg-gray-100 border border-gray-300 text-gray-900 rounded-full px-3 py-1 text-sm font-medium shadow-sm"
               >
                 <span>{item}</span>
                 <button
@@ -174,7 +174,7 @@ const CandidateFields: React.FC<CandidateFieldsProps> = ({
                       )
                     )
                   }
-                  className="ml-2 text-blue-500 hover:text-red-600 transition-colors duration-150 font-bold"
+                  className="ml-2 text-gray-600 hover:text-black transition-colors duration-150 font-bold"
                   aria-label={`Supprimer ${item}`}
                 >
                   ×
@@ -183,88 +183,10 @@ const CandidateFields: React.FC<CandidateFieldsProps> = ({
             ))}
           </div>
         )}
+
       </div>
 
 
-
-      {/* --- LANGUES --- */}
-      <div>
-        <label className="block text-sm font-medium text-gray-700">
-          Langues parlées *
-        </label>
-        <p className="text-xs text-gray-500 mb-2">
-          Cochez les langues que vous maîtrisez, puis indiquez votre niveau
-        </p>
-
-        {/* Liste de langues à cocher */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-          {langues.map((opt) => {
-            const isSelected = formData.langues.some((l) => l.nom === opt);
-
-            return (
-              <label
-                key={opt}
-                className={`flex items-center gap-2 px-3 py-2 border rounded-lg cursor-pointer transition-colors duration-200 ${isSelected
-                    ? "bg-blue-600 text-white border-blue-700"
-                    : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"
-                  }`}
-              >
-                <input
-                  type="checkbox"
-                  checked={isSelected}
-                  onChange={() => {
-                    const current = [...formData.langues];
-                    if (isSelected) {
-                      // Supprimer la langue décochée
-                      handleChange(
-                        "langues",
-                        current.filter((l) => l.nom !== opt)
-                      );
-                    } else {
-                      // Ajouter une nouvelle langue avec niveau vide
-                      handleChange("langues", [...current, { nom: opt, niveau: "" }]);
-                    }
-                  }}
-                  className="w-4 h-4 accent-blue-500 cursor-pointer"
-                />
-                <span className="text-sm font-medium">{opt}</span>
-              </label>
-            );
-          })}
-        </div>
-
-        {/* Champs de niveau pour chaque langue sélectionnée */}
-        {formData.langues.length > 0 && (
-          <div className="mt-3 space-y-3">
-            {formData.langues.map((lang, index) => (
-              <div
-                key={lang.nom}
-                className="p-3 border border-gray-200 rounded-lg bg-gray-50 shadow-sm"
-              >
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Niveau de {lang.nom.charAt(0).toUpperCase() + lang.nom.slice(1)}
-                </label>
-                <select
-                  value={lang.niveau}
-                  onChange={(e) => {
-                    const updatedLangues = [...formData.langues];
-                    updatedLangues[index].niveau = e.target.value;
-                    handleChange("langues", updatedLangues);
-                  }}
-                  className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                >
-                  <option value="">Sélectionnez le niveau</option>
-                  {["A1", "A2", "B1", "B2", "C1", "C2"].map((n) => (
-                    <option key={n} value={n}>
-                      {n}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
 
 
 
@@ -303,10 +225,10 @@ const CandidateFields: React.FC<CandidateFieldsProps> = ({
             return (
               <label
                 key={opt}
-                className={`flex items-center gap-2 border rounded-lg px-3 py-2 cursor-pointer transition-colors duration-200
-            ${isChecked
-                    ? "bg-blue-600 text-white border-blue-700 shadow-sm"
-                    : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"
+                className={`flex items-center gap-2 border rounded-lg px-3 py-2 cursor-pointer transition-all duration-200
+        ${isChecked
+                    ? "bg-gray-900 text-white border-gray-800 shadow-md"
+                    : "bg-white text-gray-800 border-gray-300 hover:bg-gray-100 hover:border-gray-400"
                   }`}
               >
                 <input
@@ -325,7 +247,7 @@ const CandidateFields: React.FC<CandidateFieldsProps> = ({
                       handleChange("domainExperiences", [...current, opt]);
                     }
                   }}
-                  className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-2 focus:ring-blue-500 cursor-pointer"
+                  className="w-4 h-4 text-black bg-white border-gray-400 rounded focus:ring-2 focus:ring-gray-600 cursor-pointer"
                 />
                 <span className="text-sm font-medium">{opt}</span>
               </label>
@@ -340,13 +262,13 @@ const CandidateFields: React.FC<CandidateFieldsProps> = ({
           </p>
         )}
 
-        {/* Liste des domaines sélectionnées */}
+        {/* Liste des domaines sélectionnés */}
         {formData.domainExperiences?.length > 0 && (
           <div className="flex flex-wrap gap-2 mt-3">
             {formData.domainExperiences.map((item) => (
               <div
                 key={item}
-                className="flex items-center bg-blue-50 border border-blue-200 text-blue-700 rounded-full px-3 py-1 text-sm font-medium shadow-sm"
+                className="flex items-center bg-gray-100 border border-gray-300 text-gray-900 rounded-full px-3 py-1 text-sm font-medium shadow-sm"
               >
                 <span>{item}</span>
                 <button
@@ -359,7 +281,7 @@ const CandidateFields: React.FC<CandidateFieldsProps> = ({
                       )
                     )
                   }
-                  className="ml-2 text-blue-500 hover:text-red-600 transition-colors duration-150 font-bold"
+                  className="ml-2 text-gray-600 hover:text-black transition-colors duration-150 font-bold"
                   aria-label={`Supprimer ${item}`}
                 >
                   ×
@@ -368,6 +290,7 @@ const CandidateFields: React.FC<CandidateFieldsProps> = ({
             ))}
           </div>
         )}
+
       </div>
 
 
@@ -424,16 +347,16 @@ const CandidateFields: React.FC<CandidateFieldsProps> = ({
           Villes souhaitées *
         </label>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+     <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
           {villes.map((opt) => {
             const isChecked = (formData.villesTravailRecherche || []).includes(opt);
             return (
               <label
                 key={opt}
-                className={`flex items-center gap-2 border rounded-lg px-3 py-2 cursor-pointer transition-colors duration-200
-            ${isChecked
-                    ? "bg-blue-600 text-white border-blue-700 shadow-sm"
-                    : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"
+                className={`flex items-center gap-2 border rounded-lg px-3 py-2 cursor-pointer transition-all duration-200
+        ${isChecked
+                    ? "bg-gray-900 text-white border-gray-800 shadow-md"
+                    : "bg-white text-gray-800 border-gray-300 hover:bg-gray-100 hover:border-gray-400"
                   }`}
               >
                 <input
@@ -452,7 +375,7 @@ const CandidateFields: React.FC<CandidateFieldsProps> = ({
                       handleChange("villesTravailRecherche", [...current, opt]);
                     }
                   }}
-                  className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-2 focus:ring-blue-500 cursor-pointer"
+                  className="w-4 h-4 text-black bg-white border-gray-400 rounded focus:ring-2 focus:ring-gray-600 cursor-pointer"
                 />
                 <span className="text-sm font-medium">{opt}</span>
               </label>
@@ -467,13 +390,13 @@ const CandidateFields: React.FC<CandidateFieldsProps> = ({
           </p>
         )}
 
-        {/* Liste des villes sélectionnées */}
+        {/* Liste des domaines sélectionnés */}
         {formData.villesTravailRecherche?.length > 0 && (
           <div className="flex flex-wrap gap-2 mt-3">
             {formData.villesTravailRecherche.map((item) => (
               <div
                 key={item}
-                className="flex items-center bg-blue-50 border border-blue-200 text-blue-700 rounded-full px-3 py-1 text-sm font-medium shadow-sm"
+                className="flex items-center bg-gray-100 border border-gray-300 text-gray-900 rounded-full px-3 py-1 text-sm font-medium shadow-sm"
               >
                 <span>{item}</span>
                 <button
@@ -486,11 +409,88 @@ const CandidateFields: React.FC<CandidateFieldsProps> = ({
                       )
                     )
                   }
-                  className="ml-2 text-blue-500 hover:text-red-600 transition-colors duration-150 font-bold"
+                  className="ml-2 text-gray-600 hover:text-black transition-colors duration-150 font-bold"
                   aria-label={`Supprimer ${item}`}
                 >
                   ×
                 </button>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* --- LANGUES --- */}
+      <div>
+        <label className="block text-sm font-medium text-gray-700">
+          Langues parlées *
+        </label>
+        <p className="text-xs text-gray-500 mb-2">
+          Cochez les langues que vous maîtrisez, puis indiquez votre niveau
+        </p>
+
+        {/* Liste de langues à cocher */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+          {langues.map((opt) => {
+            const isSelected = formData.langues.some((l) => l.nom === opt);
+
+            return (
+              <label
+                key={opt}
+                className="flex items-center bg-gray-100 border border-gray-300 text-gray-900 rounded-full px-3 py-1 text-sm font-medium shadow-sm"
+
+              >
+                <input
+                  type="checkbox"
+                  checked={isSelected}
+                  onChange={() => {
+                    const current = [...formData.langues];
+                    if (isSelected) {
+                      // Supprimer la langue décochée
+                      handleChange(
+                        "langues",
+                        current.filter((l) => l.nom !== opt)
+                      );
+                    } else {
+                      // Ajouter une nouvelle langue avec niveau vide
+                      handleChange("langues", [...current, { nom: opt, niveau: "" }]);
+                    }
+                  }}
+                  className="ml-2 text-gray-600 hover:text-black transition-colors duration-150 font-bold"
+                />
+                <span className="text-sm font-medium">{opt}</span>
+              </label>
+            );
+          })}
+        </div>
+
+        {/* Champs de niveau pour chaque langue sélectionnée */}
+        {formData.langues.length > 0 && (
+          <div className="mt-3 space-y-3">
+            {formData.langues.map((lang, index) => (
+              <div
+                key={lang.nom}
+                className="p-3 border border-gray-200 rounded-lg bg-gray-50 shadow-sm"
+              >
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Niveau de {lang.nom.charAt(0).toUpperCase() + lang.nom.slice(1)}
+                </label>
+                <select
+                  value={lang.niveau}
+                  onChange={(e) => {
+                    const updatedLangues = [...formData.langues];
+                    updatedLangues[index].niveau = e.target.value;
+                    handleChange("langues", updatedLangues);
+                  }}
+                  className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                >
+                  <option value="">Sélectionnez le niveau</option>
+                  {["A1", "A2", "B1", "B2", "C1", "C2"].map((n) => (
+                    <option key={n} value={n}>
+                      {n}
+                    </option>
+                  ))}
+                </select>
               </div>
             ))}
           </div>
