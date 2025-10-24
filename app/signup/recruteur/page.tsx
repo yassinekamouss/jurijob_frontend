@@ -8,6 +8,7 @@ import Icon from '@/app/signup/components/FormularIcons';
 import { useState } from 'react';
 import FormConfirmation from '../components/FormConfirmation';
 import type FormData from '@/app/types/DataFormDataRegister';
+
 // import recruteur from '@/app/types/recruteur';
 
 

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Recruteur } from '@/app/types/DataFormDataRegister';
-import {  typeOrganisation , tailleEntreprise , recruitmentFocus} from '@/app/constants/options';
+import { typeOrganisation, tailleEntreprise, recruitmentFocus } from '@/app/constants/options';
+import { villes } from '@/app/constants/options';
 
 type Errors = {
   [key: string]: string | undefined;
@@ -136,15 +137,23 @@ const RecruiterFields: React.FC<RecruiterFieldsProps> = ({
       <div className="grid gap-6 md:grid-cols-2">
         <div>
           <label className="block text-sm font-medium text-gray-800">Ville *</label>
-          <input
-            type="text"
-            placeholder="Paris, Lyon, Marseille..."
-            value={formData.ville || ''}
-            onChange={(e) => handleChange('ville', e.target.value)}
-            className="border border-gray-300 rounded-md w-full p-2"
+          <select
+            value={formData.ville || ""}
+            onChange={(e) => handleChange("ville", e.target.value)}
             required
-          />
+            className="border border-gray-300 rounded-md w-full p-2 text-gray-800 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200"
+          >
+            <option value="" disabled>
+              Sélectionnez une ville
+            </option>
+            {villes.map((v) => (
+              <option key={v} value={v}>
+                {v}
+              </option>
+            ))}
+          </select>
         </div>
+
 
         <div>
           <label className="block text-sm font-medium text-gray-800">Code postal *</label>
