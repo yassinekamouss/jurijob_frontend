@@ -29,9 +29,9 @@ export default function CandidatSignUp() {
       specialisations: [],
       langues: [],
       domainExperiences: [],
-      typeTravailRecherche: "",
+      typeTravailRecherche: [],
       villesTravailRecherche: [],
-      modeTravailRecherche: "",
+      modeTravailRecherche: [],
       PosteRecherche: "",
     },
   });

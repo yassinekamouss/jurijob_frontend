@@ -19,9 +19,9 @@ export interface Candidat {
   langues: Language[];
   domainExperiences: string[],
   PosteRecherche: string,
-  typeTravailRecherche: string,
+  typeTravailRecherche: string[],
   villesTravailRecherche: string[],
-  modeTravailRecherche: string
+  modeTravailRecherche: string[]
 }
 
 export interface Recruteur {

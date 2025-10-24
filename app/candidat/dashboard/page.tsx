@@ -217,10 +217,9 @@ export default function Dashboard() {
 
             <SearchPreferencesSection
               preferences={{
-                typeTravailRecherche: profileData.typeTravailRecherche || "",
-                modeTravailRecherche: profileData.modeTravailRecherche || "",
-                villesTravailRecherche:
-                  profileData.villesTravailRecherche || [],
+                typeTravailRecherche: profileData.typeTravailRecherche || [],
+                modeTravailRecherche: profileData.modeTravailRecherche || [],
+                villesTravailRecherche:  profileData.villesTravailRecherche || [],
               }}
               langues={profileData.langues as Language[]}
               onSavePreferences={handleSavePreferences}
