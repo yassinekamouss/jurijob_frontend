@@ -1,6 +1,6 @@
 export type SearchPreferences = {
-  typeTravailRecherche: string;
-  modeTravailRecherche: string;
+  typeTravailRecherche: string[];
+  modeTravailRecherche: string[];
   villesTravailRecherche: string[];
 };
 
