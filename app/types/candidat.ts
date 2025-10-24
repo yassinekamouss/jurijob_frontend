@@ -10,7 +10,7 @@ export default interface Candidat extends UserBase {
   specialisations: string[];
   langues: Language[];
   domainExperiences: string[],
-  typeTravailRecherche: string,
+  typeTravailRecherche: string[],
   villesTravailRecherche: string[],
-  modeTravailRecherche: string
+  modeTravailRecherche: string[]
 }
