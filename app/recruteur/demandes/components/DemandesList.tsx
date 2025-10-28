@@ -4,8 +4,9 @@ import React, { useEffect, useState } from "react";
 import DemandeCard from "./DemandeCard";
 import Pagination from "@/app/components/Pagination";
 import { Briefcase } from "lucide-react";
+import { useDemandesList } from "../hooks/useDemandesList";
+import { useDemandeActions } from "../hooks/useDemandeActions";
 
-import { useDemandes } from "../hooks/useDemandes";
 import DemandesFilter from "./DemandesFilter";
 
 
@@ -14,9 +15,9 @@ interface DemandesListProps {
 }
 
 const DemandesList: React.FC<DemandesListProps> = ({ filters }) => {
-  const { demandes, loading, page, total, limit, setPage } = useDemandes(4, filters);
 
-  
+const { demandes, loading, page, total, limit, setPage, setDemandes } = useDemandesList(4, filters);
+const { deleteDemande, updateDemandeStatut } = useDemandeActions(setDemandes);  
 
   if (loading) {
     return (
@@ -47,7 +48,11 @@ return (
   <div>
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       {demandes.map((demande) => (
-        <DemandeCard key={demande._id} {...demande} />
+        <DemandeCard 
+        key={demande._id} {...demande}
+         onDelete={deleteDemande}
+         onToggleStatut={updateDemandeStatut}
+          />
       ))}
     </div>
 

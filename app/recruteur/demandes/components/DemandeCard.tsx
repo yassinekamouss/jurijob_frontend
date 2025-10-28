@@ -1,12 +1,22 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { MoreVertical , Briefcase, MapPin, Clock, BookOpen, Edit2, Trash2, XCircle, Eye, CheckCircle } from "lucide-react";
 import  type Demande from "@/app/types/Demande";
+import { useAuth } from "@/app/context/AuthContext";
+import ConfirmationModal from "./ConfirmationModal";
+import { toast } from "react-hot-toast";
+import { useDemandeDetails } from "../hooks/useDemandeDetails";
+import DemandeDetailsModal from "./DemandeDetailsModal";
+
+interface DemandeCardProps extends Demande {
+  onDelete: (id: string) => Promise<{ success: boolean; message: string }>;
+  onToggleStatut: (id: string, nouveauStatut: string) => Promise<{ success: boolean; message: string }>;
+}
 
 
-
-const DemandeCard: React.FC<Demande> = ({
+const DemandeCard: React.FC<DemandeCardProps> = ({
+  _id,
   titre,
   description,
   posteRecherche,
@@ -19,9 +29,55 @@ const DemandeCard: React.FC<Demande> = ({
   domainExperiences,
   langues,
   statut,
+  onDelete,
+  onToggleStatut,
 }) => {
 
-  const [openDropdown, setOpenDropdown] = React.useState(false);
+  const [openDropdown, setOpenDropdown] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [modalType, setModalType] = useState<"delete" | "edit">("delete");
+
+const { selectedDemande, fetchDemandeDetails, setSelectedDemande } = useDemandeDetails();
+
+const handleToggleStatut = async () => {
+   setOpenDropdown(false); 
+  const nouveauStatut = statut === "ouverte" ? "fermée" : "ouverte";
+  const result = await onToggleStatut(_id, nouveauStatut);
+
+  if (result.success) {
+    toast.success(`Statut modifié avec succès : ${nouveauStatut}`);
+  } else {
+    toast.error(result.message);
+  }
+};
+
+
+const handleVoir = () => {
+  setOpenDropdown(false);
+
+  // Récupère les détails de la demande
+  fetchDemandeDetails(_id).catch((err: any) => {
+    console.error("Erreur lors de la récupération des détails :", err);
+    toast.error(err.message || "Erreur lors de la récupération des détails");
+  });
+};
+
+const handleDelete = async () => {
+  try {
+    const result = await onDelete(_id);
+
+    if (result.success) {
+      toast.success(result.message);
+    } else {
+      toast.error(result.message);
+    }
+
+    setShowModal(false);
+  } catch (error) {
+    toast.error("Erreur lors de la suppression");
+    console.error("Erreur suppression demande :", error);
+  }
+};
 
   return (
     <div className="bg-white border border-gray-200 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 mb-6 overflow-hidden group">
@@ -64,36 +120,51 @@ const DemandeCard: React.FC<Demande> = ({
     <div className="absolute right-0 mt-2 w-44 bg-white border border-gray-200 rounded-xl shadow-lg z-50">
       <ul className="flex flex-col py-1">
         <li>
-          <button className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-green-50 w-full rounded-lg">
+          <button 
+           onClick={handleVoir}
+          className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-green-50 w-full rounded-lg">
             <Eye className="w-4 h-4 text-green-600" />
             Voir les détails
           </button>
         </li>
         <li>
-          <button className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 w-full rounded-lg">
+          <button
+          
+          className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 w-full rounded-lg">
             <Edit2 className="w-4 h-4 text-blue-600" />
             Modifier
           </button>
         </li>
         <li>
           {statut === "ouverte" ? (
-            <button className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-orange-50 w-full rounded-lg">
+            <button 
+            onClick={handleToggleStatut}
+            className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-orange-50 w-full rounded-lg">
               <XCircle className="w-4 h-4 text-orange-600" />
               Fermer
             </button>
           ) : (
-            <button className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-green-50 w-full rounded-lg">
+            <button 
+            onClick={handleToggleStatut}
+            className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-green-50 w-full rounded-lg">
               <CheckCircle className="w-4 h-4 text-green-600" />
               Ouvrir
             </button>
           )}
         </li>
         <li>
-          <button className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-red-50 w-full rounded-lg">
+          <button
+            onClick={() => {
+              setModalType("delete");
+              setShowModal(true);
+            }}
+            className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-red-50 w-full rounded-lg"
+          >
             <Trash2 className="w-4 h-4 text-red-600" />
             Supprimer
           </button>
         </li>
+
       </ul>
     </div>
   )}
@@ -191,6 +262,32 @@ const DemandeCard: React.FC<Demande> = ({
           )}
         </div>
       </div>
+
+      <ConfirmationModal
+        isOpen={showModal}
+        title={modalType === "delete" ? "Confirmer la suppression" : "Confirmer la modification"}
+        message={
+          modalType === "delete"
+            ? "Êtes-vous sûr de vouloir supprimer cette demande ? Cette action est irréversible."
+            : "Êtes-vous sûr de vouloir modifier cette demande ? Les changements seront enregistrés."
+        }
+        confirmText={modalType === "delete" ? "Supprimer" : "Modifier"}
+        onConfirm={() => {
+          if (modalType === "delete") handleDelete();
+          // sinon tu pourras ajouter handleEdit() ici
+          setShowModal(false);
+        }}
+        onCancel={() => setShowModal(false)}
+        type={modalType}
+      />
+
+
+<DemandeDetailsModal
+  isOpen={!!selectedDemande}
+  demande={selectedDemande}
+  onClose={() => setSelectedDemande(null)}
+/>
+
     </div>
   );
 };
