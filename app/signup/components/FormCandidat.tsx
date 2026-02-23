@@ -10,6 +10,7 @@ import {
   modesTravailRecherche,
   domainesExperience,
   postes,
+  niveauxLangue
 } from "@/app/constants/options";
 
 
@@ -296,48 +297,159 @@ const CandidateFields: React.FC<CandidateFieldsProps> = ({
 
       {/* Type de travail recherché */}
       <div>
-        <label className="block text-sm font-medium text-gray-700">
+        <label className="block text-sm font-medium text-gray-700 mb-2">
           Type de travail recherché *
         </label>
-        <select
-          value={formData.typeTravailRecherche || ''}
-          onChange={(e) => handleChange('typeTravailRecherche', e.target.value)}
-          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:outline-none"
-          required
-        >
-          <option value="">Sélectionnez un type</option>
-          {typesTravailRecherche.map((opt) => (
-            <option key={opt} value={opt}>
-              {opt}
-            </option>
-          ))}
-        </select>
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+          {typesTravailRecherche.map((opt) => {
+            // Utilisation de la même méthode de vérification (tableau ou vide)
+            const isChecked = (formData.typeTravailRecherche || []).includes(opt);
+            return (
+              <label
+                key={opt}
+                className={`flex items-center gap-2 border rounded-lg px-3 py-2 cursor-pointer transition-all duration-200
+            ${isChecked
+                    ? "bg-gray-900 text-white border-gray-800 shadow-md"
+                    : "bg-white text-gray-800 border-gray-300 hover:bg-gray-100 hover:border-gray-400"
+                  }`}
+              >
+                <input
+                  type="checkbox"
+                  checked={isChecked}
+                  onChange={() => {
+                    // Même logique de gestion du tableau que votre code initial
+                    const current = Array.isArray(formData.typeTravailRecherche)
+                      ? formData.typeTravailRecherche
+                      : [];
+                    if (isChecked) {
+                      handleChange(
+                        "typeTravailRecherche",
+                        current.filter((s) => s !== opt)
+                      );
+                    } else {
+                      handleChange("typeTravailRecherche", [...current, opt]);
+                    }
+                  }}
+                  className="w-4 h-4 text-black bg-white border-gray-400 rounded focus:ring-2 focus:ring-gray-600 cursor-pointer"
+                />
+                <span className="text-sm font-medium">{opt}</span>
+              </label>
+            );
+          })}
+        </div>
+
+        {/* Message d'erreur */}
         {errors.typeTravailRecherche && (
-          <p className="text-xs text-red-500 mt-1">{errors.typeTravailRecherche}</p>
+          <p className="text-xs text-red-500 mt-1">
+            {errors.typeTravailRecherche}
+          </p>
         )}
 
+        {/* Liste des types sélectionnés (Badges) */}
+        {formData.typeTravailRecherche?.length > 0 && (
+          <div className="flex flex-wrap gap-2 mt-3">
+            {formData.typeTravailRecherche.map((item) => (
+              <div
+                key={item}
+                className="flex items-center bg-gray-100 border border-gray-300 text-gray-900 rounded-full px-3 py-1 text-sm font-medium shadow-sm"
+              >
+                <span>{item}</span>
+                <button
+                  type="button"
+                  onClick={() =>
+                    handleChange(
+                      "typeTravailRecherche",
+                      (formData.typeTravailRecherche || []).filter(
+                        (s) => s !== item
+                      )
+                    )
+                  }
+                  className="ml-2 text-gray-600 hover:text-black transition-colors duration-150 font-bold"
+                  aria-label={`Supprimer ${item}`}
+                >
+                  ×
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Mode de travail recherché */}
       <div>
-        <label className="block text-sm font-medium text-gray-700">
+        <label className="block text-sm font-medium text-gray-700 mb-2">
           Mode de travail recherché *
         </label>
-        <select
-          value={formData.modeTravailRecherche || ''}
-          onChange={(e) => handleChange('modeTravailRecherche', e.target.value)}
-          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:outline-none"
-          required
-        >
-          <option value="">Sélectionnez un mode</option>
-          {modesTravailRecherche.map((opt) => (
-            <option key={opt} value={opt}>
-              {opt}
-            </option>
-          ))}
-        </select>
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+          {modesTravailRecherche.map((opt) => {
+            const isChecked = (formData.modeTravailRecherche || []).includes(opt);
+            return (
+              <label
+                key={opt}
+                className={`flex items-center gap-2 border rounded-lg px-3 py-2 cursor-pointer transition-all duration-200
+            ${isChecked
+                    ? "bg-gray-900 text-white border-gray-800 shadow-md"
+                    : "bg-white text-gray-800 border-gray-300 hover:bg-gray-100 hover:border-gray-400"
+                  }`}
+              >
+                <input
+                  type="checkbox"
+                  checked={isChecked}
+                  onChange={() => {
+                    const current = Array.isArray(formData.modeTravailRecherche)
+                      ? formData.modeTravailRecherche
+                      : [];
+                    if (isChecked) {
+                      handleChange(
+                        "modeTravailRecherche",
+                        current.filter((s) => s !== opt)
+                      );
+                    } else {
+                      handleChange("modeTravailRecherche", [...current, opt]);
+                    }
+                  }}
+                  className="w-4 h-4 text-black bg-white border-gray-400 rounded focus:ring-2 focus:ring-gray-600 cursor-pointer"
+                />
+                <span className="text-sm font-medium">{opt}</span>
+              </label>
+            );
+          })}
+        </div>
+
+        {/* Message d'erreur */}
         {errors.modeTravailRecherche && (
-          <p className="text-xs text-red-500 mt-1">{errors.modeTravailRecherche}</p>
+          <p className="text-xs text-red-500 mt-1">
+            {errors.modeTravailRecherche}
+          </p>
+        )}
+
+        {/* Liste des modes sélectionnés */}
+        {formData.modeTravailRecherche?.length > 0 && (
+          <div className="flex flex-wrap gap-2 mt-3">
+            {formData.modeTravailRecherche.map((item) => (
+              <div
+                key={item}
+                className="flex items-center bg-gray-100 border border-gray-300 text-gray-900 rounded-full px-3 py-1 text-sm font-medium shadow-sm"
+              >
+                <span>{item}</span>
+                <button
+                  type="button"
+                  onClick={() =>
+                    handleChange(
+                      "modeTravailRecherche",
+                      (formData.modeTravailRecherche || []).filter(
+                        (s) => s !== item
+                      )
+                    )
+                  }
+                  className="ml-2 text-gray-600 hover:text-black transition-colors duration-150 font-bold"
+                  aria-label={`Supprimer ${item}`}
+                >
+                  ×
+                </button>
+              </div>
+            ))}
+          </div>
         )}
       </div>
 
@@ -347,7 +459,7 @@ const CandidateFields: React.FC<CandidateFieldsProps> = ({
           Villes souhaitées *
         </label>
 
-     <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
           {villes.map((opt) => {
             const isChecked = (formData.villesTravailRecherche || []).includes(opt);
             return (
@@ -485,7 +597,7 @@ const CandidateFields: React.FC<CandidateFieldsProps> = ({
                   className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
                 >
                   <option value="">Sélectionnez le niveau</option>
-                  {["A1", "A2", "B1", "B2", "C1", "C2"].map((n) => (
+                  {niveauxLangue.map((n) => (
                     <option key={n} value={n}>
                       {n}
                     </option>

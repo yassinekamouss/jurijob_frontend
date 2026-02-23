@@ -20,13 +20,14 @@ export const niveauxExperience = [
   "Senior (8-15 ans)",
   "Expert (15+ ans)",
 ];
+//entre parenthèses,niveau comme intérmédiaire, avancé, etc
 export const niveauxLangue = [
-  "A1",
-  "A2",
-  "B1",
-  "B2",
-  "C1",
-  "C2",
+  "A1 (Débutant)",
+  "A2 (Élémentaire)",
+  "B1 (Intermédiaire)",
+  "B2 (Avancé)",
+  "C1 (Maîtrise)",
+  "C2 (Natif)",
 ];
 
 //  formations juridiques
@@ -52,8 +53,9 @@ export const langues = [
 //  type de travail recherché
 export const typesTravailRecherche = [
   "Stage",
-  "Stage préembauche",
-  "Embauche",
+  "Stage pré embauche",
+  "CDD",
+  "CDI"
 ];
 
 // villes du Maroc
