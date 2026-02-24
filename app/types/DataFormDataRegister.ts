@@ -8,7 +8,26 @@ export interface User {
   imageUrl?: string | File;
   password: string; // optionnel si tu ne l’envoies pas côté frontend
   confirmPassword: string; // uniquement pour validation locale
-  role: "candidat" | "recruteur" ;
+  role: "candidat" | "recruteur";
+}
+
+export interface Formation {
+  id: string;
+  anneeDebut: string;
+  anneeFin: string;
+  niveau: string;
+  domaine: string;
+  ecole: string;
+  diplomaFile: File | null;
+}
+
+export interface Experience {
+  id: string;
+  debut: string;
+  fin: string;
+  type: string;
+  entreprise: string;
+  poste: string;
 }
 
 export interface Candidat {
@@ -21,7 +40,9 @@ export interface Candidat {
   PosteRecherche: string,
   typeTravailRecherche: string[],
   villesTravailRecherche: string[],
-  modeTravailRecherche: string[]
+  modeTravailRecherche: string[],
+  formations?: Formation[],
+  experiences?: Experience[]
 }
 
 export interface Recruteur {

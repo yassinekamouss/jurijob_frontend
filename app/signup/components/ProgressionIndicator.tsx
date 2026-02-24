@@ -8,8 +8,9 @@ interface ProgressIndicatorProps {
 const ProgressIndicator = ({ currentStep }: ProgressIndicatorProps) => {
   const steps = [
     { id: 1, label: 'Informations', icon: 'FileText' },
-    { id: 2, label: 'Spécialisation', icon: 'Settings' },
-    { id: 3, label: 'Confirmation', icon: 'ClipboardCheck' },
+    { id: 2, label: 'Profil', icon: 'Settings' },
+    { id: 3, label: 'Détails', icon: 'GraduationCap' },
+    { id: 4, label: 'Confirmation', icon: 'ClipboardCheck' },
   ];
 
   const totalSteps = steps.length;

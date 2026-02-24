@@ -40,6 +40,46 @@ export const formationsJuridiques = [
   "Autre formation juridique",
 ];
 
+// Ecoles / Universités au Maroc
+export const ecolesMaroc = [
+  "Université Mohammed V - Rabat",
+  "Université Hassan II - Casablanca",
+  "Université Cadi Ayyad - Marrakech",
+  "Université Sidi Mohamed Ben Abdellah - Fès",
+  "Université Mohammed Premier - Oujda",
+  "Université Moulay Ismaïl - Meknès",
+  "Université Abdelmalek Essaâdi - Tétouan/Tanger",
+  "Université Chouaib Doukkali - El Jadida",
+  "Université Ibn Tofail - Kénitra",
+  "Université Ibn Zohr - Agadir",
+  "Université Akhawayn - Ifrane",
+  "Université Sultan Moulay Slimane - Béni Mellal",
+  "EM Lyon Business School - Casablanca",
+  "ESSEC Business School - Rabat",
+  "Université Mundiapolis - Casablanca",
+  "Université Internationale de Rabat (UIR)",
+  "Université Privée de Marrakech (UPM)",
+  "UIC - Université Internationale de Casablanca",
+  "Autre",
+];
+
+// Domaines juridiques
+export const domainesJuridiquesMaroc = [
+  "Droit Privé",
+  "Droit Public",
+  "Droit des Affaires",
+  "Droit Civil",
+  "Droit Pénal",
+  "Droit Social / Travail",
+  "Droit Immobilier",
+  "Droit Fiscal",
+  "Droit International",
+  "Droit de l'Environnement",
+  "Droit de la Famille",
+  "Propriété Intellectuelle",
+  "Droit du Numérique",
+];
+
 // ✅ langues
 export const langues = [
   "Français",
@@ -111,6 +151,15 @@ export const postes = [
   "Juriste",
   "Assistant Juridique",
   "Conseil Juridique",
+];
+
+export const typesExperience = [
+  "Stage",
+  "Freelance",
+  "CDI",
+  "CDD",
+  "Alternance",
+  "Service Militaire / Autre",
 ];
 
 

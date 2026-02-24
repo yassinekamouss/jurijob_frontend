@@ -18,7 +18,7 @@ export default function NavigatorForm({
     const canGoNext = onNextStep(currentStep);
     if (!canGoNext) return;
 
-    if (currentStep < 3) setCurrentStep(currentStep + 1);
+    if (currentStep < 4) setCurrentStep(currentStep + 1);
   };
 
   const prevStep = () => {
@@ -40,22 +40,20 @@ export default function NavigatorForm({
         <button
           onClick={prevStep}
           disabled={currentStep === 1}
-          className={`px-4 py-2 rounded-lg transition-all ${
-            currentStep === 1
-              ? "bg-muted text-muted-foreground cursor-not-allowed"
-              : "bg-secondary text-secondary-foreground hover:opacity-90"
-          }`}>
+          className={`px-4 py-2 rounded-lg transition-all ${currentStep === 1
+            ? "bg-muted text-muted-foreground cursor-not-allowed"
+            : "bg-secondary text-secondary-foreground hover:opacity-90"
+            }`}>
           Précédent
         </button>
 
         <button
           onClick={nextStep}
-          disabled={currentStep === 3}
-          className={`px-4 py-2 rounded-lg transition-all ${
-            currentStep === 3
-              ? "bg-muted text-muted-foreground cursor-not-allowed"
-              : "bg-primary text-primary-foreground hover:opacity-90"
-          }`}>
+          disabled={currentStep === 4}
+          className={`px-4 py-2 rounded-lg transition-all ${currentStep === 4
+            ? "bg-muted text-muted-foreground cursor-not-allowed"
+            : "bg-primary text-primary-foreground hover:opacity-90"
+            }`}>
           Suivant
         </button>
       </div>

@@ -3,6 +3,7 @@
 import NavigatorForm from "@/app/signup/components/FormNavigator";
 import CommunFileds from "@/app/signup/components/FormCommunFileds";
 import FormCandidat from "@/app/signup/components/FormCandidat";
+import CandidatDetails from "@/app/signup/components/CandidatDetails";
 import FormConfirmation from "@/app/signup/components/FormConfirmation";
 import Header from "@/app/components/Header";
 import Icon from "@/app/signup/components/FormularIcons";
@@ -33,6 +34,8 @@ export default function CandidatSignUp() {
       villesTravailRecherche: [],
       modeTravailRecherche: [],
       PosteRecherche: "",
+      formations: [],
+      experiences: [],
     },
   });
 
@@ -115,20 +118,46 @@ export default function CandidatSignUp() {
 
       const createdUser = await userResponse.json();
       const userId = createdUser.userId; // dépend de ta réponse API (par ex. `createdUser.data.id`)
-      console.log("Utilisateur créé avec succès :", createdUser);
+      // console.log("Utilisateur créé avec succès :", createdUser);
       // Étape 3 : préparer les données du candidat
       const candidatData = {
         ...formData.candidat,
         userId: userId,
       };
+      console.log(candidatData);
 
-      // Étape 4 : envoyer le candidat à l’API
+      // Étape 4 : envoyer le candidat à l’API via FormData pour supporter les fichiers
+      const candidatFormData = new FormData();
+
+      // On sépare les fichiers des données JSON
+      const { formations = [], ...restCandidatData } = candidatData;
+
+      // Nettoyer les objets formations pour ne pas inclure l'objet File dans le JSON
+      const cleanedFormations = formations.map(f => {
+        const { diplomaFile, ...rest } = f;
+        return rest;
+      });
+
+      const dataToSend = {
+        ...restCandidatData,
+        formations: cleanedFormations
+      };
+
+      candidatFormData.append("data", JSON.stringify(dataToSend));
+
+      // Ajouter chaque fichier avec une clé unique basée sur l'id de la formation
+      formations.forEach(f => {
+        if (f.diplomaFile && f.diplomaFile instanceof File) {
+          candidatFormData.append(`diploma_${f.id}`, f.diplomaFile);
+        }
+      });
+
       const candidatResponse = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/candidats/complete-profile`,
         {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(candidatData),
+          body: candidatFormData,
+          // Ne pas mettre de Content-Type, le navigateur le gère (multipart/form-data avec le boundary)
         }
       );
 
@@ -274,6 +303,19 @@ export default function CandidatSignUp() {
         );
 
       case 3:
+        return (
+          <form className="space-y-4">
+            <CandidatDetails
+              formData={formData.candidat as any}
+              onFieldChange={(field, value) =>
+                onFieldChange("candidat", field, value)
+              }
+              errors={errors.candidat || {}}
+            />
+          </form>
+        );
+
+      case 4:
         return <FormConfirmation formData={formData} onSubmit={handleSubmit} />;
 
       default:
