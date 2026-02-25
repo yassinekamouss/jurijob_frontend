@@ -1,5 +1,6 @@
 import { Language } from "./searchPreferences";
 import UserBase from "./userBase";
+import { Formation, Experience } from "./DataFormDataRegister";
 
 
 export default interface Candidat extends UserBase {
@@ -12,5 +13,7 @@ export default interface Candidat extends UserBase {
   domainExperiences: string[],
   typeTravailRecherche: string[],
   villesTravailRecherche: string[],
-  modeTravailRecherche: string[]
+  modeTravailRecherche: string[],
+  formations: Formation[];
+  experiences: Experience[];
 }

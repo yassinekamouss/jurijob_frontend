@@ -34,8 +34,27 @@ export default function CandidatSignUp() {
       villesTravailRecherche: [],
       modeTravailRecherche: [],
       PosteRecherche: "",
-      formations: [],
-      experiences: [],
+      formations: [
+        {
+          id: Math.random().toString(36).substr(2, 9),
+          anneeDebut: "",
+          anneeFin: "",
+          niveau: "",
+          domaine: "",
+          ecole: "",
+          diplomaFile: null,
+        }
+      ],
+      experiences: [
+        {
+          id: Math.random().toString(36).substr(2, 9),
+          debut: "",
+          fin: "",
+          type: "",
+          entreprise: "",
+          poste: "",
+        }
+      ],
     },
   });
 
@@ -240,6 +259,49 @@ export default function CandidatSignUp() {
       //   newErrors.checkboxes = "Veuillez cocher au moins une option";
       //   valid = false;
       // }
+
+
+    } else if (step === 3) {
+      section = "candidat";
+
+      const { formations = [], experiences = [] } = formData.candidat || {};
+
+      // Valider les formations
+      if (!formations || formations.length === 0) {
+        newErrors.formations = "Veuillez ajouter au moins une formation.";
+        valid = false;
+      } else {
+        const hasEmptyFormationFields = formations.some(
+          (f: any) =>
+            !f.anneeDebut ||
+            !f.anneeFin ||
+            !f.niveau ||
+            !f.domaine ||
+            !f.ecole ||
+            !f.diplomaFile
+        );
+        if (hasEmptyFormationFields) {
+          newErrors.formations =
+            "Veuillez remplir tous les champs de chaque formation, y compris le diplôme PDF.";
+          valid = false;
+        }
+      }
+
+      // Valider les expériences
+      if (!experiences || experiences.length === 0) {
+        newErrors.experiences = "Veuillez ajouter au moins une expérience.";
+        valid = false;
+      } else {
+        const hasEmptyExperienceFields = experiences.some(
+          (e: any) => !e.debut || !e.fin || !e.type || !e.entreprise || !e.poste
+        );
+        if (hasEmptyExperienceFields) {
+          newErrors.experiences =
+            "Veuillez remplir tous les champs de chaque expérience.";
+          valid = false;
+        }
+      }
+      requiredFields = []; // on a tout traité manuellement
     } else {
       return true; // rien à valider
     }

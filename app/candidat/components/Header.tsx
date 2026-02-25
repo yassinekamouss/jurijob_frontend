@@ -1,5 +1,6 @@
 import { LogOut } from "lucide-react";
 import Brand from "@/app/components/Brand";
+import Link from "next/link";
 
 export function Header({ candidateName, onLogout }: {
   candidateName: string;
@@ -11,8 +12,8 @@ export function Header({ candidateName, onLogout }: {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4"> {/* Réduction du gap pour mobile */}
             <Brand />
-            Dashboard 
-            
+            Dashboard
+
             {/* Ce conteneur sera caché sur mobile et affiché en flex sur les écrans moyens et plus */}
             <div className="hidden md:flex items-center gap-4">
               <div className="h-6 w-px bg-gray-300"></div>
@@ -21,19 +22,32 @@ export function Header({ candidateName, onLogout }: {
               </h1>
             </div>
           </div>
+          <div className="flex items-center gap-2 md:gap-4">
+            <Link
+              href="/candidat/dashboard"
+              className="inline-flex items-center justify-center p-2 md:px-4 md:py-2 border border-transparent text-sm font-medium rounded-md text-black bg-gray-100 hover:bg-gray-200 transition-colors"
+            >
+              <span className="hidden md:inline">Dashboard</span>
+              <span className="md:hidden">Dash.</span>
+            </Link>
 
-          <button
-            onClick={onLogout}
-            // Classes de base pour mobile (bouton icône carré) + classes pour écrans plus grands
-            className="inline-flex items-center justify-center p-2 md:px-4 md:py-2 border border-gray-300 text-sm font-medium rounded-md text-black bg-white hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors"
-            aria-label="Déconnexion" // Ajout d'un aria-label pour l'accessibilité quand le texte est caché
-          >
-            {/* La marge de l'icône ne s'applique que sur les écrans moyens et plus */}
-            <LogOut className="h-4 w-4 md:mr-2" />
-            
-            {/* Le texte du bouton est caché sur mobile et s'affiche sur les écrans moyens et plus */}
-            <span className="hidden md:inline">Déconnexion</span>
-          </button>
+            <Link
+              href="/candidat/dashboard/parcours"
+              className="inline-flex items-center justify-center p-2 md:px-4 md:py-2 border border-transparent text-sm font-medium rounded-md text-black bg-gray-100 hover:bg-gray-200 transition-colors"
+            >
+              <span className="hidden md:inline">Mon Parcours</span>
+              <span className="md:hidden">Parcours</span>
+            </Link>
+
+            <button
+              onClick={onLogout}
+              className="inline-flex items-center justify-center p-2 md:px-4 md:py-2 border border-gray-300 text-sm font-medium rounded-md text-black bg-white hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors"
+              aria-label="Déconnexion"
+            >
+              <LogOut className="h-4 w-4 md:mr-2" />
+              <span className="hidden md:inline">Déconnexion</span>
+            </button>
+          </div>
         </div>
       </div>
     </header>
