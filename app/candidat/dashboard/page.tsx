@@ -219,7 +219,7 @@ export default function Dashboard() {
               preferences={{
                 typeTravailRecherche: profileData.typeTravailRecherche || [],
                 modeTravailRecherche: profileData.modeTravailRecherche || [],
-                villesTravailRecherche:  profileData.villesTravailRecherche || [],
+                villesTravailRecherche: profileData.villesTravailRecherche || [],
               }}
               langues={profileData.langues as Language[]}
               onSavePreferences={handleSavePreferences}

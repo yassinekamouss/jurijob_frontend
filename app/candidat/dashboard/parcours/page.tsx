@@ -45,7 +45,7 @@ export default function ParcoursPage() {
     try {
       const parcoursFormData = new FormData();
 
-      const cleanedFormations = formations.map(f => {
+      const cleanedFormations = formations?.map(f => {
         const { diplomaFile, ...rest } = f;
         if (typeof diplomaFile === 'string') {
           return { ...rest, diplomaFile };
