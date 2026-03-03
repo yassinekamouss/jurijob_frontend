@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import Select from "react-select";
 import {
   Edit2,
@@ -107,6 +107,11 @@ export function SearchPreferencesSection({
   const [editedPreferences, setEditedPreferences] = useState(preferences);
   const [editedLanguages, setEditedLanguages] = useState(languesData);
 
+  const [portalTarget, setPortalTarget] = useState<HTMLElement | null>(null);
+useEffect(() => {
+  setPortalTarget(portalTarget);
+}, []);
+  
   // Gestion langues
   const [newLanguageName, setNewLanguageName] = useState("");
   const [newLanguageLevel, setNewLanguageLevel] = useState("");
@@ -253,7 +258,7 @@ const getAvailableLanguages = () => {
               noOptionsMessage={() => "Aucune option disponible"}
               closeMenuOnSelect={false}
               classNamePrefix="react-select"
-              menuPortalTarget={document.body}
+              menuPortalTarget={portalTarget}
               menuPosition="fixed"
             />
             {((isEditing
@@ -288,7 +293,7 @@ const getAvailableLanguages = () => {
               noOptionsMessage={() => "Aucune option disponible"}
               closeMenuOnSelect={false}
               classNamePrefix="react-select"
-              menuPortalTarget={document.body}
+              menuPortalTarget={portalTarget}
               menuPosition="fixed"
             />
             {((isEditing
@@ -323,7 +328,7 @@ const getAvailableLanguages = () => {
               noOptionsMessage={() => "Aucune option disponible"}
               closeMenuOnSelect={false}
               classNamePrefix="react-select"
-              menuPortalTarget={document.body}
+              menuPortalTarget={portalTarget}
               menuPosition="fixed"
             />
             {((isEditing
@@ -378,7 +383,7 @@ const getAvailableLanguages = () => {
                         styles={customStyles}
                         isClearable
                         classNamePrefix="react-select"
-                        menuPortalTarget={document.body}
+                        menuPortalTarget={portalTarget}
                          menuPosition="fixed"
                       />
                       ) : (
@@ -407,7 +412,7 @@ const getAvailableLanguages = () => {
                           styles={customStyles}
                           isClearable
                           classNamePrefix="react-select"
-                          menuPortalTarget={document.body}
+                          menuPortalTarget={portalTarget}
                           menuPosition="fixed"
                         />
                       ) : (
@@ -458,7 +463,7 @@ const getAvailableLanguages = () => {
                     styles={customStyles}
                     isClearable
                     classNamePrefix="react-select"
-                    menuPortalTarget={document.body}
+                    menuPortalTarget={portalTarget}
                     menuPosition="fixed"
                   />
                   </div>
@@ -481,7 +486,7 @@ const getAvailableLanguages = () => {
                       styles={customStyles}
                       isClearable
                       classNamePrefix="react-select"
-                      menuPortalTarget={document.body}
+                      menuPortalTarget={portalTarget}
                       menuPosition="fixed"
 
                     />
