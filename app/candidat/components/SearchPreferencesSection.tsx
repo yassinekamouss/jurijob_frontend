@@ -105,7 +105,7 @@ export function SearchPreferencesSection({
 }) {
   const [isEditing, setIsEditing] = useState(false);
   const [editedPreferences, setEditedPreferences] = useState(preferences);
-  const [editedLanguages, setEditedLanguages] = useState(languesData);
+  const [editedLanguages, setEditedLanguages] = useState(languesData ?? []);
 
   const [portalTarget, setPortalTarget] = useState<HTMLElement | null>(null);
 useEffect(() => {
