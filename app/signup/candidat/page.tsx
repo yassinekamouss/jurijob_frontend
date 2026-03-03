@@ -119,39 +119,33 @@ export default function CandidatSignUp() {
           body: formDataToSend,
         }
       );
+
       if (!userResponse.ok) {
         let errorMsg = "Erreur lors de la création de l'utilisateur";
         try {
-          const errorData = await userResponse.json(); //  on essaye de parser le JSON
-          if (errorData.message) {
-            errorMsg = errorData.message; //  on récupère le vrai message du backend
-          }
+          const errorData = await userResponse.json();
+          errorMsg = errorData.message || errorMsg;
         } catch {
-          const errorText = await userResponse.text(); // fallback si ce n'est pas du JSON
+          const errorText = await userResponse.text();
           errorMsg = errorText || errorMsg;
         }
-
-        console.error("Réponse serveur (err):", errorMsg);
-        throw new Error(errorMsg); // on lance le vrai message
+        console.error("Erreur serveur (utilisateur) :", errorMsg);
+        throw new Error(errorMsg);
       }
 
       const createdUser = await userResponse.json();
-      const userId = createdUser.userId; // dépend de ta réponse API (par ex. `createdUser.data.id`)
-      // console.log("Utilisateur créé avec succès :", createdUser);
+      const userId = createdUser.userId;
+
       // Étape 3 : préparer les données du candidat
       const candidatData = {
         ...formData.candidat,
         userId: userId,
       };
-      console.log(candidatData);
 
       // Étape 4 : envoyer le candidat à l’API via FormData pour supporter les fichiers
       const candidatFormData = new FormData();
-
-      // On sépare les fichiers des données JSON
       const { formations = [], ...restCandidatData } = candidatData;
 
-      // Nettoyer les objets formations pour ne pas inclure l'objet File dans le JSON
       const cleanedFormations = formations.map(f => {
         const { diplomaFile, ...rest } = f;
         return rest;
@@ -164,7 +158,6 @@ export default function CandidatSignUp() {
 
       candidatFormData.append("data", JSON.stringify(dataToSend));
 
-      // Ajouter chaque fichier avec une clé unique basée sur l'id de la formation
       formations.forEach(f => {
         if (f.diplomaFile && f.diplomaFile instanceof File) {
           candidatFormData.append(`diploma_${f.id}`, f.diplomaFile);
@@ -176,14 +169,20 @@ export default function CandidatSignUp() {
         {
           method: "POST",
           body: candidatFormData,
-          // Ne pas mettre de Content-Type, le navigateur le gère (multipart/form-data avec le boundary)
         }
       );
 
       if (!candidatResponse.ok) {
-        const errorText = await candidatResponse.text();
-        console.error("Erreur backend candidat :", errorText);
-        throw new Error(errorText || "Erreur lors de la création du candidat");
+        let errorMsg = "Erreur lors de la création du profil candidat";
+        try {
+          const errorData = await candidatResponse.json();
+          errorMsg = errorData.message || errorMsg;
+        } catch {
+          const errorText = await candidatResponse.text();
+          errorMsg = errorText || errorMsg;
+        }
+        console.error("Erreur serveur (candidat) :", errorMsg);
+        throw new Error(errorMsg);
       }
 
       console.log("Candidat créé avec succès !");
