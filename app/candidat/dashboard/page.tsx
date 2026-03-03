@@ -221,7 +221,7 @@ export default function Dashboard() {
                 modeTravailRecherche: profileData.modeTravailRecherche || [],
                 villesTravailRecherche: profileData.villesTravailRecherche || [],
               }}
-              langues={profileData.langues as Language[]}
+              langues={(profileData.langues as Language[]) ?? []}
               onSavePreferences={handleSavePreferences}
               onSaveLanguages={handleSaveLanguages}
             />
