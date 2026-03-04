@@ -122,11 +122,11 @@ export default function CandidatSignUp() {
 
       if (!userResponse.ok) {
         let errorMsg = "Erreur lors de la création de l'utilisateur";
+        const errorText = await userResponse.text();
         try {
-          const errorData = await userResponse.json();
-          errorMsg = errorData.message || errorMsg;
+          const errorData = JSON.parse(errorText);
+          errorMsg = errorData.message || errorData.details || errorText || errorMsg;
         } catch {
-          const errorText = await userResponse.text();
           errorMsg = errorText || errorMsg;
         }
         console.error("Erreur serveur (utilisateur) :", errorMsg);
@@ -174,11 +174,17 @@ export default function CandidatSignUp() {
 
       if (!candidatResponse.ok) {
         let errorMsg = "Erreur lors de la création du profil candidat";
+        const errorText = await candidatResponse.text();
         try {
-          const errorData = await candidatResponse.json();
-          errorMsg = errorData.message || errorMsg;
+          const errorData = JSON.parse(errorText);
+          // Prioriser le message, puis les détails (diagnostic)
+          errorMsg = errorData.message || errorData.details || errorText || errorMsg;
+
+          // Si on a des infos de debug, on peut les ajouter proprement
+          if (errorData.debug) {
+            console.log("Debug info from server:", errorData.debug);
+          }
         } catch {
-          const errorText = await candidatResponse.text();
           errorMsg = errorText || errorMsg;
         }
         console.error("Erreur serveur (candidat) :", errorMsg);
