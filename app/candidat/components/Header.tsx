@@ -32,7 +32,7 @@ export function Header({ candidateName, onLogout }: {
             </Link>
 
             <Link
-              href="/candidat/dashboard/parcours"
+              href="/candidat/parcours"
               className="inline-flex items-center justify-center p-2 md:px-4 md:py-2 border border-transparent text-sm font-medium rounded-md text-black bg-gray-100 hover:bg-gray-200 transition-colors"
             >
               <span className="hidden md:inline">Mon Parcours</span>

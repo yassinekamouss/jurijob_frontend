@@ -12,6 +12,7 @@ import { PersonalInfo } from "@/app/types/personalInfo";
 import { SearchPreferences, Language } from "@/app/types/searchPreferences";
 import Candidat from "@/app/types/candidat";
 import { Mail, Phone, ShieldCheck, Info, Clock, Lightbulb } from "lucide-react";
+import toast from "react-hot-toast";
 
 export default function Dashboard() {
   const { user, loading, logout, fetchWithAuth } = useAuth();
@@ -51,6 +52,8 @@ export default function Dashboard() {
   const handleSavePersonalInfo = async (data: PersonalInfo) => {
     if (!profileData) return;
     try {
+      let res: Response;
+
       // Si on a un fichier File/Blob, on utilise FormData
       if (data.imageUrl && typeof data.imageUrl !== "string") {
         const formData = new FormData();
@@ -61,16 +64,10 @@ export default function Dashboard() {
         formData.append("isArchived", data.isArchived ? "true" : "false");
         formData.append("image", data.imageUrl);
 
-        const res = await fetchWithAuth("/users/update-user", {
+        res = await fetchWithAuth("/users/update-user", {
           method: "PATCH",
           body: formData,
         });
-
-        if (!res.ok) {
-          const err = await res.json().catch(() => ({}));
-          console.error("Update user failed", err);
-          return;
-        }
       } else {
         // Sinon, envoyer du JSON classique
         const payload = {
@@ -81,23 +78,28 @@ export default function Dashboard() {
           isArchived: data.isArchived,
         };
 
-        const res = await fetchWithAuth("/users/update-user", {
+        res = await fetchWithAuth("/users/update-user", {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload),
         });
+      }
 
-        if (!res.ok) {
-          const err = await res.json().catch(() => ({}));
-          console.error("Update user failed", err);
-          return;
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        if (res.status === 409) {
+          toast.error(err.message || "Cet email est déjà utilisé par un autre compte.");
+        } else {
+          toast.error(err.message || "Erreur lors de la mise à jour du profil.");
         }
+        return;
       }
 
       await refreshProfile();
-      console.log("Notification: Informations personnelles mises à jour");
+      toast.success("Informations personnelles mises à jour.");
     } catch (e) {
       console.error("Erreur MAJ infos personnelles", e);
+      toast.error("Une erreur inattendue est survenue.");
     }
   };
 
