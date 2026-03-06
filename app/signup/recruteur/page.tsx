@@ -4,6 +4,7 @@ import CommunFileds from '@/app/signup/components/FormCommunFileds';
 import FormRecruteur from '@/app/signup/components/FormRecuiter';
 import Header from '@/app/components/Header';
 import Icon from '@/app/signup/components/FormularIcons';
+import toast from 'react-hot-toast';
 
 import { useState } from 'react';
 import FormConfirmation from '../components/FormConfirmation';
@@ -19,7 +20,7 @@ export default function RecruteurSignUp() {
       prenom: '',
       telephone: '',
       email: '',
-      imageUrl:'',
+      imageUrl: '',
       password: '',
       confirmPassword: '',
       role: 'recruteur',
@@ -34,7 +35,7 @@ export default function RecruteurSignUp() {
       codePostal: '',
     },
   });
- const handleSubmit = async () => {
+  const handleSubmit = async () => {
 
 
     try {
@@ -45,32 +46,42 @@ export default function RecruteurSignUp() {
 
       console.log('Données utilisateur prêtes pour l\'API :', user);
 
-       const formDataToSend = new FormData();
+      const formDataToSend = new FormData();
 
-    // Ajouter tous les champs texte sauf "imageUrl"
-    Object.entries(user).forEach(([key, value]) => {
-      if (key !== "imageUrl" && value !== undefined && value !== null) {
-        formDataToSend.append(key, value as string);
+      // Ajouter tous les champs texte sauf "imageUrl"
+      Object.entries(user).forEach(([key, value]) => {
+        if (key !== "imageUrl" && value !== undefined && value !== null) {
+          formDataToSend.append(key, value as string);
+        }
+      });
+
+      // Ajouter le fichier sous le champ "image" attendu par Multer
+      if (user.imageUrl && user.imageUrl instanceof File) {
+        formDataToSend.append("image", user.imageUrl);
       }
-    });
 
-    // Ajouter le fichier sous le champ "image" attendu par Multer
-    if (user.imageUrl && user.imageUrl instanceof File) {
-      formDataToSend.append("image", user.imageUrl);
-    }
-
-    console.log("Données utilisateur prêtes pour l'API :", user);
+      console.log("Données utilisateur prêtes pour l'API :", user);
 
       // Étape 2 : envoyer le user à l’API
-     const userResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/register`, {
-      method: "POST",
-      body: formDataToSend,
-    });
+      const userResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/register`, {
+        method: "POST",
+        body: formDataToSend,
+      });
 
       if (!userResponse.ok) {
+        let errorMsg = "Erreur lors de la création de l'utilisateur";
         const errorText = await userResponse.text();
-        console.error("Réponse serveur (err):", errorText);
-        throw new Error("Erreur lors de la création de l'utilisateur");
+        try {
+          const errorData = JSON.parse(errorText);
+          errorMsg = errorData.message || errorText || errorMsg;
+        } catch {
+          errorMsg = errorText || errorMsg;
+        }
+        if (userResponse.status === 409) {
+          toast.error(errorMsg);
+        }
+        console.error("Réponse serveur (err):", errorMsg);
+        throw new Error(errorMsg);
       }
 
       const createdUser = await userResponse.json();
@@ -124,7 +135,7 @@ export default function RecruteurSignUp() {
     }));
   };
   // ✅ Validation selon l’étape
-  const handleNextStepValidation = (step: number): boolean => {
+  const handleNextStepValidation = async (step: number): Promise<boolean> => {
     let requiredFields: string[] = [];
     const newErrors: Record<string, string> = {};
     let valid = true;
@@ -174,8 +185,6 @@ export default function RecruteurSignUp() {
     // ✅ Validation générique
     requiredFields.forEach((field) => {
       const value = (formData[section] as any)[field as keyof (typeof formData)[typeof section]];
-      // ⬆ mais TypeScript n’aime pas trop ça, donc mieux de faire :
-      // const value = (formData[section] as Record<string, any>)[field];
 
       if (
         value === undefined ||
@@ -195,6 +204,34 @@ export default function RecruteurSignUp() {
         ...newErrors,
       },
     }));
+
+    // Vérification asynchrone de l'email (uniquement à l'étape 1, si tout est valide)
+    if (step === 1 && valid && formData.user.email) {
+      try {
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/users/check-email`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email: formData.user.email }),
+          }
+        );
+        if (res.status === 409) {
+          const data = await res.json().catch(() => ({}));
+          toast.error(data.message || "Cet email est déjà utilisé par un autre compte.");
+          setErrors(prev => ({
+            ...prev,
+            user: {
+              ...(prev as any).user || {},
+              email: "Cet email est déjà utilisé",
+            },
+          }));
+          return false;
+        }
+      } catch {
+        // En cas d'erreur réseau, on laisse passer — le backend re-vérifiera à l'étape finale
+      }
+    }
 
     return valid;
   };

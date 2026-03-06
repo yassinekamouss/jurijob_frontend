@@ -7,6 +7,7 @@ import CandidatDetails from "@/app/signup/components/CandidatDetails";
 import FormConfirmation from "@/app/signup/components/FormConfirmation";
 import Header from "@/app/components/Header";
 import Icon from "@/app/signup/components/FormularIcons";
+import toast from "react-hot-toast";
 
 import { useState } from "react";
 import type FormData from "@/app/types/DataFormDataRegister";
@@ -129,6 +130,9 @@ export default function CandidatSignUp() {
         } catch {
           errorMsg = errorText || errorMsg;
         }
+        if (userResponse.status === 409) {
+          toast.error(errorMsg);
+        }
         console.error("Erreur serveur (utilisateur) :", errorMsg);
         throw new Error(errorMsg);
       }
@@ -199,7 +203,7 @@ export default function CandidatSignUp() {
   };
 
   // ✅ Validation selon l’étape
-  const handleNextStepValidation = (step: number): boolean => {
+  const handleNextStepValidation = async (step: number): Promise<boolean> => {
     let requiredFields: string[] = [];
     const newErrors: Record<string, string> = {};
     let valid = true;
@@ -337,6 +341,34 @@ export default function CandidatSignUp() {
         ...newErrors,
       },
     }));
+
+    // Vérification asynchrone de l'email (uniquement à l'étape 1, si tout est valide)
+    if (step === 1 && valid && formData.user.email) {
+      try {
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/users/check-email`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email: formData.user.email }),
+          }
+        );
+        if (res.status === 409) {
+          const data = await res.json().catch(() => ({}));
+          toast.error(data.message || "Cet email est déjà utilisé par un autre compte.");
+          setErrors((prev) => ({
+            ...prev,
+            user: {
+              ...(prev.user || {}),
+              email: "Cet email est déjà utilisé",
+            },
+          }));
+          return false;
+        }
+      } catch {
+        // En cas d'erreur réseau, on laisse passer — le backend re-vérifiera à l'étape finale
+      }
+    }
 
     return valid;
   };

@@ -4,7 +4,7 @@ import ProgressIndicator from "./ProgressionIndicator";
 
 interface NavigatorFormProps {
   children: (currentStep: number) => ReactNode;
-  onNextStep: (currentStep: number) => boolean; // ✅ fonction de validation
+  onNextStep: (currentStep: number) => Promise<boolean> | boolean; // ✅ supporte sync et async
 }
 
 export default function NavigatorForm({
@@ -13,9 +13,9 @@ export default function NavigatorForm({
 }: NavigatorFormProps) {
   const [currentStep, setCurrentStep] = useState(1);
 
-  const nextStep = () => {
-    // Demander au parent si on peut avancer
-    const canGoNext = onNextStep(currentStep);
+  const nextStep = async () => {
+    // Demander au parent si on peut avancer (supporte async)
+    const canGoNext = await onNextStep(currentStep);
     if (!canGoNext) return;
 
     if (currentStep < 4) setCurrentStep(currentStep + 1);
