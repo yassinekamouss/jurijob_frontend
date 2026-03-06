@@ -9,6 +9,7 @@ interface CommonFieldsProps {
   onFieldChange: (field: keyof User, value: any) => void;
   errors: Partial<Record<keyof User, string>>;
   className?: string;
+  showImage?: boolean;
 }
 
 const CommonFields: React.FC<CommonFieldsProps> = ({
@@ -16,6 +17,7 @@ const CommonFields: React.FC<CommonFieldsProps> = ({
   onFieldChange,
   errors = {},
   className = "",
+  showImage = true,
 }) => {
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [showConfirmPassword, setShowConfirmPassword] =
@@ -137,95 +139,96 @@ const CommonFields: React.FC<CommonFieldsProps> = ({
         </p>
       </div>
 
-      {/* --- IMAGE DE PROFIL (amélioré) --- */}
-      <div className="flex flex-col">
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          Photo de profil
-        </label>
+      {/* --- IMAGE DE PROFIL (uniquement candidat) --- */}
+      {showImage && (
+        <div className="flex flex-col">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Photo de profil
+          </label>
 
-        <div
-          onDrop={onDrop}
-          onDragOver={onDragOver}
-          onDragLeave={onDragLeave}
-          className={`relative w-full rounded-xl border-2 transition-all ${
-            dragActive
-              ? "border-primary bg-primary/5"
-              : "border-dashed border-border bg-input-background"
-          }`}>
-          <div className="flex items-center gap-4 p-4">
-            {/* Aperçu */}
-            <div className="h-16 w-16 rounded-full overflow-hidden border border-border bg-muted flex items-center justify-center">
-              {formData.imageUrl ? (
-                <img
-                  src={
-                    typeof formData.imageUrl === "string"
-                      ? formData.imageUrl
-                      : URL.createObjectURL(formData.imageUrl)
-                  }
-                  alt="Aperçu du profil"
-                  className="h-full w-full object-cover"
-                />
-              ) : (
-                <Icon
-                  name="UserRound"
-                  size={28}
-                  className="text-muted-foreground"
-                />
-              )}
-            </div>
+          <div
+            onDrop={onDrop}
+            onDragOver={onDragOver}
+            onDragLeave={onDragLeave}
+            className={`relative w-full rounded-xl border-2 transition-all ${dragActive
+                ? "border-primary bg-primary/5"
+                : "border-dashed border-border bg-input-background"
+              }`}>
+            <div className="flex items-center gap-4 p-4">
+              {/* Aperçu */}
+              <div className="h-16 w-16 rounded-full overflow-hidden border border-border bg-muted flex items-center justify-center">
+                {formData.imageUrl ? (
+                  <img
+                    src={
+                      typeof formData.imageUrl === "string"
+                        ? formData.imageUrl
+                        : URL.createObjectURL(formData.imageUrl)
+                    }
+                    alt="Aperçu du profil"
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  <Icon
+                    name="UserRound"
+                    size={28}
+                    className="text-muted-foreground"
+                  />
+                )}
+              </div>
 
-            {/* Texte et actions */}
-            <div className="flex-1 min-w-0">
-              <p className="text-sm text-foreground font-medium">
-                Glissez-déposez une image ici
-              </p>
-              <p className="text-xs text-muted-foreground">
-                PNG, JPG, WebP – max 3MB
-              </p>
-              {formData.imageUrl instanceof File && (
-                <p className="mt-1 text-xs text-muted-foreground truncate">
-                  {(formData.imageUrl as File).name} ·{" "}
-                  {formatBytes((formData.imageUrl as File).size)}
+              {/* Texte et actions */}
+              <div className="flex-1 min-w-0">
+                <p className="text-sm text-foreground font-medium">
+                  Glissez-déposez une image ici
                 </p>
-              )}
-            </div>
+                <p className="text-xs text-muted-foreground">
+                  PNG, JPG, WebP – max 3MB
+                </p>
+                {formData.imageUrl instanceof File && (
+                  <p className="mt-1 text-xs text-muted-foreground truncate">
+                    {(formData.imageUrl as File).name} ·{" "}
+                    {formatBytes((formData.imageUrl as File).size)}
+                  </p>
+                )}
+              </div>
 
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                onClick={() => inputRef.current?.click()}
-                className="inline-flex items-center gap-2 rounded-lg bg-primary text-primary-foreground px-3 py-2 text-sm hover:opacity-90 transition">
-                <Icon name="Camera" size={18} />
-                Choisir une photo
-              </button>
-              {formData.imageUrl && (
+              <div className="flex items-center gap-2">
                 <button
                   type="button"
-                  onClick={() => validateAndSetImage(null)}
-                  className="inline-flex items-center gap-2 rounded-lg bg-muted text-foreground px-3 py-2 text-sm hover:opacity-90 transition">
-                  <Icon name="Trash2" size={18} />
-                  Supprimer
+                  onClick={() => inputRef.current?.click()}
+                  className="inline-flex items-center gap-2 rounded-lg bg-primary text-primary-foreground px-3 py-2 text-sm hover:opacity-90 transition">
+                  <Icon name="Camera" size={18} />
+                  Choisir une photo
                 </button>
-              )}
+                {formData.imageUrl && (
+                  <button
+                    type="button"
+                    onClick={() => validateAndSetImage(null)}
+                    className="inline-flex items-center gap-2 rounded-lg bg-muted text-foreground px-3 py-2 text-sm hover:opacity-90 transition">
+                    <Icon name="Trash2" size={18} />
+                    Supprimer
+                  </button>
+                )}
+              </div>
             </div>
+
+            {/* Input caché */}
+            <input
+              ref={inputRef}
+              type="file"
+              accept="image/png,image/jpeg,image/webp"
+              onChange={(e) => validateAndSetImage(e.target.files?.[0])}
+              className="hidden"
+            />
           </div>
 
-          {/* Input caché */}
-          <input
-            ref={inputRef}
-            type="file"
-            accept="image/png,image/jpeg,image/webp"
-            onChange={(e) => validateAndSetImage(e.target.files?.[0])}
-            className="hidden"
-          />
+          {(errors.imageUrl || localImgError) && (
+            <p className="text-xs text-red-500 mt-2">
+              {localImgError || errors.imageUrl}
+            </p>
+          )}
         </div>
-
-        {(errors.imageUrl || localImgError) && (
-          <p className="text-xs text-red-500 mt-2">
-            {localImgError || errors.imageUrl}
-          </p>
-        )}
-      </div>
+      )}
 
       {/* --- NOM / PRENOM --- */}
       <div className="grid gap-6 md:grid-cols-2">

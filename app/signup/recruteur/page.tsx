@@ -246,6 +246,7 @@ export default function RecruteurSignUp() {
               formData={formData.user}          // ✅ on passe seulement la partie "user"
               onFieldChange={(field, value) => onFieldChange('user', field, value)}
               errors={errors.user as any || {}}        // ✅ uniquement les erreurs de user
+              showImage={false}
             />
           </form>
         );
