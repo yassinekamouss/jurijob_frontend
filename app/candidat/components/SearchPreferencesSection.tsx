@@ -81,8 +81,8 @@ const customStyles = {
     backgroundColor: state.isSelected
       ? "#000"
       : state.isFocused
-      ? "#f3f4f6"
-      : "#fff",
+        ? "#f3f4f6"
+        : "#fff",
     color: state.isSelected ? "#fff" : "#111827",
     cursor: "pointer",
     fontSize: "0.875rem",
@@ -108,10 +108,10 @@ export function SearchPreferencesSection({
   const [editedLanguages, setEditedLanguages] = useState(languesData ?? []);
 
   const [portalTarget, setPortalTarget] = useState<HTMLElement | null>(null);
-useEffect(() => {
-  setPortalTarget(portalTarget);
-}, []);
-  
+  useEffect(() => {
+    setPortalTarget(portalTarget);
+  }, []);
+
   // Gestion langues
   const [newLanguageName, setNewLanguageName] = useState("");
   const [newLanguageLevel, setNewLanguageLevel] = useState("");
@@ -188,16 +188,16 @@ useEffect(() => {
     "inline-flex items-center justify-center rounded-md text-sm font-medium h-10 px-3 py-2 text-gray-600 hover:text-black hover:bg-gray-100 transition-colors";
 
 
-    // Filtrer les langues déjà sélectionnées
-const getAvailableLanguages = () => {
-  // Récupérer toutes les langues déjà choisies
-  const selectedLanguages = (isEditing ? editedLanguages : languesData).map(
-    (langue) => langue.nom
-  );
+  // Filtrer les langues déjà sélectionnées
+  const getAvailableLanguages = () => {
+    // Récupérer toutes les langues déjà choisies
+    const selectedLanguages = (isEditing ? editedLanguages : languesData).map(
+      (langue) => langue.nom
+    );
 
-  // Retourner uniquement les langues non encore sélectionnées
-  return langues.filter((langue) => !selectedLanguages.includes(langue));
-};
+    // Retourner uniquement les langues non encore sélectionnées
+    return langues.filter((langue) => !selectedLanguages.includes(langue));
+  };
 
 
   return (
@@ -206,7 +206,7 @@ const getAvailableLanguages = () => {
         <h2 className="text-base font-semibold text-gray-900">
           Préférences de recherche & Langues
         </h2>
-        {!isEditing ? (
+        {!isEditing && (
           <button
             onClick={() => setIsEditing(true)}
             className={`${buttonGhostStyle} w-full sm:w-auto`}
@@ -214,23 +214,6 @@ const getAvailableLanguages = () => {
             <Edit2 className="h-4 w-4 mr-2" />
             Modifier
           </button>
-        ) : (
-          <div className="flex gap-2 w-full sm:w-auto flex-col sm:flex-row">
-            <button
-              onClick={handleCancel}
-              className={`${buttonGhostStyle} w-full sm:w-auto`}
-            >
-              <X className="h-4 w-4 mr-1" />
-              Annuler
-            </button>
-            <button
-              onClick={handleSave}
-              className={`${buttonPrimaryStyle} w-full sm:w-auto`}
-            >
-              <Check className="h-4 w-4 mr-1" />
-              Enregistrer
-            </button>
-          </div>
         )}
       </div>
 
@@ -265,10 +248,10 @@ const getAvailableLanguages = () => {
               ? editedPreferences.typeTravailRecherche
               : preferences.typeTravailRecherche) || []
             ).length === 0 && (
-              <p className="text-xs text-gray-500 italic">
-                Aucun type de travail sélectionné
-              </p>
-            )}
+                <p className="text-xs text-gray-500 italic">
+                  Aucun type de travail sélectionné
+                </p>
+              )}
           </div>
 
           {/* Mode de travail avec react-select */}
@@ -300,10 +283,10 @@ const getAvailableLanguages = () => {
               ? editedPreferences.modeTravailRecherche
               : preferences.modeTravailRecherche) || []
             ).length === 0 && (
-              <p className="text-xs text-gray-500 italic">
-                Aucun mode de travail sélectionné
-              </p>
-            )}
+                <p className="text-xs text-gray-500 italic">
+                  Aucun mode de travail sélectionné
+                </p>
+              )}
           </div>
 
           {/* Villes avec react-select */}
@@ -335,10 +318,10 @@ const getAvailableLanguages = () => {
               ? editedPreferences.villesTravailRecherche
               : preferences.villesTravailRecherche) || []
             ).length === 0 && (
-              <p className="text-xs text-gray-500 italic">
-                Aucune ville sélectionnée
-              </p>
-            )}
+                <p className="text-xs text-gray-500 italic">
+                  Aucune ville sélectionnée
+                </p>
+              )}
           </div>
 
           {/* Langues */}
@@ -375,17 +358,17 @@ const getAvailableLanguages = () => {
                         Langue
                       </label>
                       {isEditing ? (
-                      <Select
-                        options={createOptions(getAvailableLanguages().concat(langue.nom ? [langue.nom] : []))}
-                        value={langue.nom ? { value: langue.nom, label: langue.nom } : null}
-                        onChange={(option) => updateLanguageName(index, option?.value || "")}
-                        placeholder="Choisir une langue"
-                        styles={customStyles}
-                        isClearable
-                        classNamePrefix="react-select"
-                        menuPortalTarget={portalTarget}
-                         menuPosition="fixed"
-                      />
+                        <Select
+                          options={createOptions(getAvailableLanguages().concat(langue.nom ? [langue.nom] : []))}
+                          value={langue.nom ? { value: langue.nom, label: langue.nom } : null}
+                          onChange={(option) => updateLanguageName(index, option?.value || "")}
+                          placeholder="Choisir une langue"
+                          styles={customStyles}
+                          isClearable
+                          classNamePrefix="react-select"
+                          menuPortalTarget={portalTarget}
+                          menuPosition="fixed"
+                        />
                       ) : (
                         <div className="h-10 flex items-center px-3 bg-white border border-gray-200 rounded-md text-sm">
                           {langue.nom}
@@ -425,11 +408,10 @@ const getAvailableLanguages = () => {
                     <button
                       onClick={() => isEditing && removeLanguage(index)}
                       disabled={!isEditing}
-                      className={`flex-shrink-0 w-full sm:w-10 h-10 flex items-center justify-center rounded-md mt-6 ${
-                        isEditing
+                      className={`flex-shrink-0 w-full sm:w-10 h-10 flex items-center justify-center rounded-md mt-6 ${isEditing
                           ? "text-red-600 hover:text-red-700 hover:bg-red-50 transition-colors"
                           : "text-gray-300 cursor-not-allowed"
-                      }`}
+                        }`}
                       title="Supprimer"
                     >
                       <Trash2 className="h-4 w-4" />
@@ -451,21 +433,21 @@ const getAvailableLanguages = () => {
                     <label className="text-xs font-medium text-gray-600">
                       Langue
                     </label>
-                     <Select
-                    options={createOptions(getAvailableLanguages())}
-                    value={
-                      newLanguageName
-                        ? { value: newLanguageName, label: newLanguageName }
-                        : null
-                    }
-                    onChange={(option) => setNewLanguageName(option?.value || "")}
-                    placeholder="Sélectionnez une langue..."
-                    styles={customStyles}
-                    isClearable
-                    classNamePrefix="react-select"
-                    menuPortalTarget={portalTarget}
-                    menuPosition="fixed"
-                  />
+                    <Select
+                      options={createOptions(getAvailableLanguages())}
+                      value={
+                        newLanguageName
+                          ? { value: newLanguageName, label: newLanguageName }
+                          : null
+                      }
+                      onChange={(option) => setNewLanguageName(option?.value || "")}
+                      placeholder="Sélectionnez une langue..."
+                      styles={customStyles}
+                      isClearable
+                      classNamePrefix="react-select"
+                      menuPortalTarget={portalTarget}
+                      menuPosition="fixed"
+                    />
                   </div>
 
                   <div className="sm:w-48 w-full space-y-2">
@@ -495,11 +477,10 @@ const getAvailableLanguages = () => {
                   <button
                     onClick={addLanguage}
                     disabled={!newLanguageName.trim() || !newLanguageLevel}
-                    className={`h-10 px-4 py-2 rounded-md text-sm font-medium flex items-center justify-center gap-2 transition-colors w-full sm:w-auto ${
-                      !newLanguageName.trim() || !newLanguageLevel
+                    className={`h-10 px-4 py-2 rounded-md text-sm font-medium flex items-center justify-center gap-2 transition-colors w-full sm:w-auto ${!newLanguageName.trim() || !newLanguageLevel
                         ? "border border-gray-300 text-gray-400 cursor-not-allowed bg-gray-50"
                         : "border border-gray-900 text-gray-900 hover:bg-gray-900 hover:text-white bg-white"
-                    }`}
+                      }`}
                   >
                     <Plus className="h-4 w-4" />
                     Ajouter
@@ -510,6 +491,30 @@ const getAvailableLanguages = () => {
           </div>
         </div>
       </div>
+
+      {isEditing && (
+        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 shadow-[0_-10px_15px_-3px_rgba(0,0,0,0.05)] z-50 animate-in slide-in-from-bottom-2">
+          <div className="max-w-7xl mx-auto flex items-center justify-end gap-3 px-4 sm:px-6">
+            <span className="hidden sm:inline-block mr-auto text-sm font-medium text-gray-500">
+              Modifications en cours...
+            </span>
+            <button
+              onClick={handleCancel}
+              className="inline-flex items-center justify-center h-10 px-4 text-sm font-medium transition-colors hover:bg-gray-100 rounded-md text-gray-600 hover:text-black border border-gray-200 bg-white w-full sm:w-auto"
+            >
+              <X className="h-4 w-4 mr-2" />
+              Annuler
+            </button>
+            <button
+              onClick={handleSave}
+              className="inline-flex items-center justify-center h-10 px-4 text-sm font-medium transition-colors rounded-md bg-black text-white hover:bg-gray-800 w-full sm:w-auto shadow-sm"
+            >
+              <Check className="h-4 w-4 mr-2" />
+              Enregistrer
+            </button>
+          </div>
+        </div>
+      )}
     </section>
   );
 }

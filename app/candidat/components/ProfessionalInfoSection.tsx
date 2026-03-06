@@ -77,8 +77,8 @@ const customStyles = {
     backgroundColor: state.isSelected
       ? "#000"
       : state.isFocused
-      ? "#f3f4f6"
-      : "#fff",
+        ? "#f3f4f6"
+        : "#fff",
     color: state.isSelected ? "#fff" : "#111827",
     cursor: "pointer",
     fontSize: "0.875rem",
@@ -122,10 +122,9 @@ export function ProfessionalInfoSection({
   };
 
   const inputCls = (enabled: boolean) =>
-    `w-full border rounded-md px-3 py-2 outline-none transition ${
-      enabled
-        ? "border-gray-300 focus:border-gray-900 bg-white"
-        : "border-gray-200 bg-gray-50 cursor-not-allowed"
+    `w-full border rounded-md px-3 py-2 outline-none transition ${enabled
+      ? "border-gray-300 focus:border-gray-900 bg-white"
+      : "border-gray-200 bg-gray-50 cursor-not-allowed"
     }`;
 
   const selectCls = inputCls;
@@ -136,7 +135,7 @@ export function ProfessionalInfoSection({
         <h2 className="text-black font-medium">
           Informations professionnelles
         </h2>
-        {!isEditing ? (
+        {!isEditing && (
           <button
             onClick={() => setIsEditing(true)}
             className="flex items-center gap-2 text-sm text-gray-600 hover:text-black transition w-full sm:w-auto justify-center"
@@ -144,23 +143,6 @@ export function ProfessionalInfoSection({
             <Edit2 className="h-4 w-4" />
             Modifier
           </button>
-        ) : (
-          <div className="flex gap-3 w-full sm:w-auto flex-col sm:flex-row">
-            <button
-              onClick={handleCancel}
-              className="flex items-center gap-1 px-3 py-1.5 text-sm text-gray-600 border border-gray-300 rounded-md hover:bg-gray-100 justify-center"
-            >
-              <X className="h-4 w-4" />
-              Annuler
-            </button>
-            <button
-              onClick={handleSave}
-              className="flex items-center gap-1 px-3 py-1.5 text-sm bg-black text-white rounded-md hover:bg-gray-800 justify-center"
-            >
-              <Check className="h-4 w-4" />
-              Enregistrer
-            </button>
-          </div>
         )}
       </div>
 
@@ -242,7 +224,7 @@ export function ProfessionalInfoSection({
           {/* Spécialisations avec react-select */}
           <div className="space-y-3 pt-4 border-t border-gray-200">
             <label className="text-gray-700 text-sm font-medium flex items-center gap-2">
-              <Scale className="h-4 w-4" /> 
+              <Scale className="h-4 w-4" />
               Spécialisations
             </label>
             <Select
@@ -271,7 +253,7 @@ export function ProfessionalInfoSection({
           {/* Domaines d'expérience avec react-select */}
           <div className="space-y-3 pt-4 border-t border-gray-200">
             <label className="text-gray-700 text-sm font-medium flex items-center gap-2">
-              <Briefcase className="h-4 w-4" /> 
+              <Briefcase className="h-4 w-4" />
               Domaines d'expérience
             </label>
             <Select
@@ -298,6 +280,30 @@ export function ProfessionalInfoSection({
           </div>
         </div>
       </div>
+
+      {isEditing && (
+        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 shadow-[0_-10px_15px_-3px_rgba(0,0,0,0.05)] z-50 animate-in slide-in-from-bottom-2">
+          <div className="max-w-7xl mx-auto flex items-center justify-end gap-3 px-4 sm:px-6">
+            <span className="hidden sm:inline-block mr-auto text-sm font-medium text-gray-500">
+              Modifications en cours...
+            </span>
+            <button
+              onClick={handleCancel}
+              className="inline-flex items-center justify-center h-10 px-4 text-sm font-medium transition-colors hover:bg-gray-100 rounded-md text-gray-600 hover:text-black border border-gray-200 bg-white w-full sm:w-auto"
+            >
+              <X className="h-4 w-4 mr-2" />
+              Annuler
+            </button>
+            <button
+              onClick={handleSave}
+              className="inline-flex items-center justify-center h-10 px-4 text-sm font-medium transition-colors rounded-md bg-black text-white hover:bg-gray-800 w-full sm:w-auto shadow-sm"
+            >
+              <Check className="h-4 w-4 mr-2" />
+              Enregistrer
+            </button>
+          </div>
+        </div>
+      )}
     </section>
   );
 }
